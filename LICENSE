@@ -1,3 +1,10 @@
+This project is released under the terms of the MIT license.
+
+Code reused from Bryce Neal's hellobitcoin project (https://github.com/prettymuchbryce/hellobitcoin). 
+Original license reproduced here:
+
+--------
+
 Copyright (c) 2014 Bryce Neal
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,3 +24,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------

@@ -1,0 +1,5 @@
+Bitcoin M-of-N Multisig P2SH implemented in Go
+==============================================
+
+Work in progress. Current master branch will fund a 2-of-2 P2SH multisig with create_multisig.go and redeem that multisig with redeem_multisig.go. More here as it develops.
+
