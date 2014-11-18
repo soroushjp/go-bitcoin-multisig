@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"code.google.com/p/go.crypto/ripemd160"
+	"github.com/soroushjp/hellobitcoin/base58check"
 	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
@@ -43,8 +44,8 @@ func main() {
 	//the destination address, the number of satoshis to send, and the scriptSig
 	//which is temporarily (prior to signing) the ScriptPubKey of the input transaction.
 
-	privateKeyBytes1 := base58CheckDecode(flagPrivateKey1)
-	privateKeyBytes2 := base58CheckDecode(flagPrivateKey2)
+	privateKeyBytes1 := base58check.Decode(flagPrivateKey1)
+	privateKeyBytes2 := base58check.Decode(flagPrivateKey2)
 
 	publicKey1 := generatePublicKey(privateKeyBytes1)
 	publicKey2 := generatePublicKey(privateKeyBytes2)
@@ -81,7 +82,7 @@ func main() {
 }
 
 func createP2PKHScriptPubKey(publicKeyBase58 string) []byte {
-	publicKeyBytes := base58CheckDecode(publicKeyBase58)
+	publicKeyBytes := base58check.Decode(publicKeyBase58)
 
 	var scriptPubKey bytes.Buffer
 	scriptPubKey.WriteByte(byte(118))                 //OP_DUP
@@ -168,7 +169,7 @@ func signRawTransaction(rawTransaction []byte, firstPrivateKeyBase58 string, sec
 func createSignatureWithKey(rawTransaction []byte, privateKeyBase58 string) []byte {
 
 	secp256k1.Start()
-	privateKeyBytes := base58CheckDecode(privateKeyBase58)
+	privateKeyBytes := base58check.Decode(privateKeyBase58)
 	var privateKeyBytes32 [32]byte
 
 	for i := 0; i < 32; i++ {

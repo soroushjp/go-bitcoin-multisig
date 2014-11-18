@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"code.google.com/p/go.crypto/ripemd160"
+	"github.com/soroushjp/hellobitcoin/base58check"
 	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
@@ -46,8 +47,8 @@ func main() {
 	publicKey1 = generatePublicKey(privateKey1)
 	publicKey2 = generatePublicKey(privateKey2)
 
-	privateKeyWif1 := base58CheckEncode("80", privateKey1)
-	privateKeyWif2 := base58CheckEncode("80", privateKey2)
+	privateKeyWif1 := base58check.Encode("80", privateKey1)
+	privateKeyWif2 := base58check.Encode("80", privateKey2)
 
 	//First we create the raw transaction.
 	//In order to construct the raw transaction we need the input transaction hash,
@@ -88,7 +89,7 @@ func main() {
 }
 
 func createP2PKHScriptPubKey(publicKeyBase58 string) []byte {
-	publicKeyBytes := base58CheckDecode(publicKeyBase58)
+	publicKeyBytes := base58check.Decode(publicKeyBase58)
 
 	var scriptPubKey bytes.Buffer
 	scriptPubKey.WriteByte(byte(118))                 //OP_DUP
@@ -142,7 +143,7 @@ func signRawTransaction(rawTransaction []byte, privateKeyBase58 string) []byte {
 	//Here we start the process of signing the raw transaction.
 
 	secp256k1.Start()
-	privateKeyBytes := base58CheckDecode(privateKeyBase58)
+	privateKeyBytes := base58check.Decode(privateKeyBase58)
 	var privateKeyBytes32 [32]byte
 
 	for i := 0; i < 32; i++ {
