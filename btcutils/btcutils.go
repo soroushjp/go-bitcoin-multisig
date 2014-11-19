@@ -56,7 +56,7 @@ func NewPublicKey(privateKey []byte) ([]byte, error) {
 	secp256k1.Start()
 	publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
 	if !success {
-		return nil, errors.New("Failed to create public key from provided private key bytes.")
+		return nil, errors.New("Failed to create public key from provided private key.")
 	}
 	secp256k1.Stop()
 
@@ -204,7 +204,7 @@ func NewSignature(rawTransaction []byte, privateKey []byte) ([]byte, error) {
 	//Get the raw public key
 	publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
 	if !success {
-		return nil, errors.New("Failed to convert private key to public key")
+		return nil, errors.New("Failed to create public key from provided private key.")
 	}
 
 	//Hash the raw transaction twice before the signing
