@@ -8,12 +8,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math"
-	"math/rand"
-	"time"
 
-	"code.google.com/p/go.crypto/ripemd160"
 	"github.com/soroushjp/hellobitcoin/base58check"
+	"github.com/soroushjp/hellobitcoin/btcutils"
 	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
@@ -21,46 +18,29 @@ var flagPrivateKey string
 var flagPublicKey string
 var flagInputTransaction string
 var flagSatoshis int
-
-var privateKey1 []byte
-var privateKey2 []byte
-var publicKey1 []byte
-var publicKey2 []byte
-
-var scriptPubKey []byte
+var flagP2SHDestination string
 
 func main() {
-	//This transaction code is not completely robust.
-	//It expects that you have exactly 1 input transaction, and 1 output address.
-	//It also expects that your transaction is a standard Pay To Public Key Hash (P2PKH) transaction.
-	//This is the most common form used to send a transaction to one or multiple Bitcoin addresses.
-
 	//Parse flags
 	flag.StringVar(&flagPrivateKey, "private-key", "", "Private key of bitcoin to send.")
 	flag.StringVar(&flagPublicKey, "public-key", "", "Public address of bitcoin to send.")
 	flag.StringVar(&flagInputTransaction, "input-transaction", "", "Input transaction hash of bitcoin to send.")
 	flag.IntVar(&flagSatoshis, "satoshis", 0, "Amount of bitcoin to send in satoshi (100,000,000 satoshi = 1 bitcoin).")
+	flag.StringVar(&flagP2SHDestination, "destination", "", "Destination address. For P2SH, this should start with '3'.")
 	flag.Parse()
-
-	privateKey1 = generatePrivateKey()
-	privateKey2 = generatePrivateKey()
-	publicKey1 = generatePublicKey(privateKey1)
-	publicKey2 = generatePublicKey(privateKey2)
-
-	privateKeyWif1 := base58check.Encode("80", privateKey1)
-	privateKeyWif2 := base58check.Encode("80", privateKey2)
 
 	//First we create the raw transaction.
 	//In order to construct the raw transaction we need the input transaction hash,
 	//the destination address, the number of satoshis to send, and the scriptSig
 	//which is temporarily (prior to signing) the ScriptPubKey of the input transaction.
-	tempScriptSig := createP2PKHScriptPubKey(flagPublicKey)
+	tempScriptSig := btcutils.CreateP2PKHScriptPubKey(base58check.Decode(flagPublicKey))
 
-	//2 of 2 Redeem Script
-	twoOfTwoRedeemScript := createTwoOfTwoRedeemScript(publicKey1, publicKey2)
+	redeemScriptHash := base58check.Decode(flagP2SHDestination)
 
-	//Script pub key
-	scriptPubKey = createP2SHScriptPubKey(twoOfTwoRedeemScript)
+	scriptPubKey, err := btcutils.CreateP2SHScriptPubKey(redeemScriptHash)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rawTransaction := createRawTransaction(flagInputTransaction, flagSatoshis, tempScriptSig, scriptPubKey)
 
@@ -77,69 +57,14 @@ func main() {
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
 
 	//Sign the raw transaction, and output it to the console.
-	finalTransaction := signRawTransaction(rawTransactionWithHashCodeType, flagPrivateKey)
+	finalTransaction := signRawTransaction(rawTransactionWithHashCodeType, flagPrivateKey, scriptPubKey)
 	finalTransactionHex := hex.EncodeToString(finalTransaction)
 
-	fmt.Println("Your first generated private key for multisig is")
-	fmt.Println(privateKeyWif1)
-	fmt.Println("Your second generated private key for multisig is")
-	fmt.Println(privateKeyWif2)
 	fmt.Println("Your final transaction is")
 	fmt.Println(finalTransactionHex)
 }
 
-func createP2PKHScriptPubKey(publicKeyBase58 string) []byte {
-	publicKeyBytes := base58check.Decode(publicKeyBase58)
-
-	var scriptPubKey bytes.Buffer
-	scriptPubKey.WriteByte(byte(118))                 //OP_DUP
-	scriptPubKey.WriteByte(byte(169))                 //OP_HASH160
-	scriptPubKey.WriteByte(byte(len(publicKeyBytes))) //PUSH
-	scriptPubKey.Write(publicKeyBytes)
-	scriptPubKey.WriteByte(byte(136)) //OP_EQUALVERIFY
-	scriptPubKey.WriteByte(byte(172)) //OP_CHECKSIG
-	return scriptPubKey.Bytes()
-}
-
-func createTwoOfTwoRedeemScript(firstPublicKey []byte, secondPublicKey []byte) []byte {
-	//<OP_2> <A pubkey> <B pubkey> <C pubkey> <OP_3> OP_CHECKMULTISIG
-
-	var redeemScript bytes.Buffer
-	redeemScript.WriteByte(byte(82))                  //OP_2
-	redeemScript.WriteByte(byte(len(firstPublicKey))) //PUSH
-	redeemScript.Write(firstPublicKey)
-	redeemScript.WriteByte(byte(len(secondPublicKey))) //PUSH
-	redeemScript.Write(secondPublicKey)
-	redeemScript.WriteByte(byte(82))  //OP_2
-	redeemScript.WriteByte(byte(174)) //OP_CHECKMULTISIG
-	return redeemScript.Bytes()
-
-}
-
-func createP2SHScriptPubKey(redeemScript []byte) []byte {
-
-	if redeemScript == nil {
-		return nil
-	}
-
-	//We need to perform SHA256 and then RIPEMD-160 to get Hash160(redeemScript) as required by P2SH
-	shaHash := sha256.New()
-	shaHash.Write(redeemScript)
-	var redeemScriptHash []byte = shaHash.Sum(nil) //SHA256 first
-	ripemd160Hash := ripemd160.New()
-	ripemd160Hash.Write(redeemScriptHash)
-	redeemScriptHash = ripemd160Hash.Sum(nil) //RIPEMD160 second
-
-	var scriptPubKey bytes.Buffer
-	scriptPubKey.WriteByte(byte(169))                   //OP_HASH160
-	scriptPubKey.WriteByte(byte(len(redeemScriptHash))) //PUSH
-	scriptPubKey.Write(redeemScriptHash)
-	scriptPubKey.WriteByte(byte(135)) //OP_EQUAL
-
-	return scriptPubKey.Bytes()
-}
-
-func signRawTransaction(rawTransaction []byte, privateKeyBase58 string) []byte {
+func signRawTransaction(rawTransaction []byte, privateKeyBase58 string, scriptPubKey []byte) []byte {
 	//Here we start the process of signing the raw transaction.
 
 	secp256k1.Start()
@@ -166,7 +91,7 @@ func signRawTransaction(rawTransaction []byte, privateKeyBase58 string) []byte {
 	rawTransactionHashed := shaHash2.Sum(nil)
 
 	//Sign the raw transaction
-	signedTransaction, success := secp256k1.Sign(rawTransactionHashed, privateKeyBytes32, generateNonce())
+	signedTransaction, success := secp256k1.Sign(rawTransactionHashed, privateKeyBytes32, btcutils.GenerateNonce())
 	if !success {
 		log.Fatal("Failed to sign transaction")
 	}
@@ -202,15 +127,6 @@ func signRawTransaction(rawTransaction []byte, privateKeyBase58 string) []byte {
 
 	//Return the final transaction
 	return createRawTransaction(flagInputTransaction, flagSatoshis, scriptSig, scriptPubKey)
-}
-
-func generateNonce() [32]byte {
-	var bytes [32]byte
-	for i := 0; i < 32; i++ {
-		//This is not "cryptographically random"
-		bytes[i] = byte(randInt(0, math.MaxUint8))
-	}
-	return bytes
 }
 
 func createRawTransaction(inputTransactionHash string, satoshis int, scriptSig []byte, scriptPubKey []byte) []byte {
@@ -286,53 +202,4 @@ func createRawTransaction(inputTransactionHash string, satoshis int, scriptSig [
 	buffer.Write(lockTimeField)
 
 	return buffer.Bytes()
-}
-
-func generatePublicKey(privateKeyBytes []byte) []byte {
-	//Generate the public key from the private key.
-	//Unfortunately golang ecdsa package does not include a
-	//secp256k1 curve as this is fairly specific to bitcoin
-	//as I understand it, so I have used this one by toxeus which wraps the official bitcoin/c-secp256k1 with cgo.
-	var privateKeyBytes32 [32]byte
-	for i := 0; i < 32; i++ {
-		privateKeyBytes32[i] = privateKeyBytes[i]
-	}
-	secp256k1.Start()
-	publicKeyBytes, success := secp256k1.Pubkey_create(privateKeyBytes32, false)
-	if !success {
-		log.Fatal("Failed to create public key.")
-	}
-
-	secp256k1.Stop()
-
-	return publicKeyBytes
-
-}
-
-func generatePublicKeyHash(publicKeyBytes []byte) []byte {
-	//Next we get a sha256 hash of the public key generated
-	//via ECDSA, and then get a ripemd160 hash of the sha256 hash.
-	shaHash := sha256.New()
-	shaHash.Write(publicKeyBytes)
-	shadPublicKeyBytes := shaHash.Sum(nil)
-
-	ripeHash := ripemd160.New()
-	ripeHash.Write(shadPublicKeyBytes)
-	ripeHashedBytes := ripeHash.Sum(nil)
-
-	return ripeHashedBytes
-}
-
-func generatePrivateKey() []byte {
-	bytes := make([]byte, 32)
-	for i := 0; i < 32; i++ {
-		//This is not "cryptographically random"
-		bytes[i] = byte(randInt(0, math.MaxUint8))
-	}
-	return bytes
-}
-
-func randInt(min int, max int) uint8 {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return uint8(min + rand.Intn(max-min))
 }

@@ -2,19 +2,34 @@ package btcutils
 
 import (
 	"bytes"
-	"code.google.com/p/go.crypto/ripemd160"
 	"crypto/sha256"
 	"errors"
-	secp256k1 "github.com/toxeus/go-secp256k1"
 	"log"
 	"math"
 	"math/rand"
 	"time"
+
+	"code.google.com/p/go.crypto/ripemd160"
+	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
 func randInt(min int, max int) uint8 {
+	//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
+	// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
+	// FOR DEMONSTRATION PURPOSES ONLY
 	rand.Seed(time.Now().UTC().UnixNano())
 	return uint8(min + rand.Intn(max-min))
+}
+
+func GenerateNonce() [32]byte {
+	var bytes [32]byte
+	for i := 0; i < 32; i++ {
+		//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
+		// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
+		// FOR DEMONSTRATION PURPOSES ONLY
+		bytes[i] = byte(randInt(0, math.MaxUint8))
+	}
+	return bytes
 }
 
 func GeneratePrivateKey() []byte {
@@ -42,7 +57,6 @@ func GeneratePublicKey(privateKeyBytes []byte) []byte {
 	if !success {
 		log.Fatal("Failed to create public key.")
 	}
-
 	secp256k1.Stop()
 
 	return publicKeyBytes
@@ -51,7 +65,6 @@ func GeneratePublicKey(privateKeyBytes []byte) []byte {
 
 func CreateTwoOfTwoRedeemScript(firstPublicKey []byte, secondPublicKey []byte) []byte {
 	//<OP_2> <A pubkey> <B pubkey> <C pubkey> <OP_3> OP_CHECKMULTISIG
-
 	var redeemScript bytes.Buffer
 	redeemScript.WriteByte(byte(82))                  //OP_2
 	redeemScript.WriteByte(byte(len(firstPublicKey))) //PUSH
@@ -64,9 +77,33 @@ func CreateTwoOfTwoRedeemScript(firstPublicKey []byte, secondPublicKey []byte) [
 
 }
 
+func CreateP2SHScriptPubKey(redeemScriptHash []byte) ([]byte, error) {
+	if redeemScriptHash == nil {
+		return nil, errors.New("redeemScriptHash can't be empty")
+	}
+	var scriptPubKey bytes.Buffer
+	scriptPubKey.WriteByte(byte(169))                   //OP_HASH160
+	scriptPubKey.WriteByte(byte(len(redeemScriptHash))) //PUSH
+	scriptPubKey.Write(redeemScriptHash)
+	scriptPubKey.WriteByte(byte(135)) //OP_EQUAL
+
+	return scriptPubKey.Bytes(), nil
+}
+
+func CreateP2PKHScriptPubKey(publicKeyBytes []byte) []byte {
+	var scriptPubKey bytes.Buffer
+	scriptPubKey.WriteByte(byte(118))                 //OP_DUP
+	scriptPubKey.WriteByte(byte(169))                 //OP_HASH160
+	scriptPubKey.WriteByte(byte(len(publicKeyBytes))) //PUSH
+	scriptPubKey.Write(publicKeyBytes)
+	scriptPubKey.WriteByte(byte(136)) //OP_EQUALVERIFY
+	scriptPubKey.WriteByte(byte(172)) //OP_CHECKSIG
+
+	return scriptPubKey.Bytes()
+}
+
 func Hash160(hashBytes []byte) ([]byte, error) {
 	//Does identical function to Script OP_HASH160. Hash once with SHA-256, then RIPEMD-160
-
 	if hashBytes == nil {
 		return nil, errors.New("Empty bytes cannot be hashed")
 	}

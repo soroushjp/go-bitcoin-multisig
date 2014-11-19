@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"log"
+
 	"github.com/soroushjp/hellobitcoin/base58check"
 	"github.com/soroushjp/hellobitcoin/btcutils"
-	"log"
 )
 
 func main() {
