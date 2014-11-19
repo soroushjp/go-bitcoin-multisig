@@ -26,11 +26,13 @@ func main() {
 	flag.StringVar(&flagP2SHDestination, "destination", "", "Destination address. For P2SH, this should start with '3'.")
 	flag.Parse()
 
-	//First we create the raw transaction.
+	//Get private key as decoded raw bytes
+	privateKey := base58check.Decode(flagPrivateKey)
 	//In order to construct the raw transaction we need the input transaction hash,
-	//the destination address, the number of satoshis to send, and the scriptSig
+	//the P2SH destination address, the number of satoshis to send, and the scriptSig
 	//which is temporarily (prior to signing) the ScriptPubKey of the input transaction.
-	tempScriptSig := btcutils.NewP2PKHScriptPubKey(base58check.Decode(flagPublicAddress))
+	publicKeyHash := base58check.Decode(flagPublicAddress)
+	tempScriptSig := btcutils.NewP2PKHScriptPubKey(publicKeyHash)
 
 	redeemScriptHash := base58check.Decode(flagP2SHDestination)
 
@@ -57,7 +59,7 @@ func main() {
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
 
 	//Sign the raw transaction, and output it to the console.
-	finalTransaction, err := signRawTransaction(rawTransactionWithHashCodeType, flagPrivateKey, scriptPubKey)
+	finalTransaction, err := signRawTransaction(rawTransactionWithHashCodeType, privateKey, scriptPubKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -67,19 +69,15 @@ func main() {
 	fmt.Println(finalTransactionHex)
 }
 
-func signRawTransaction(rawTransaction []byte, privateKeyBase58 string, scriptPubKey []byte) ([]byte, error) {
-
-	privateKeyBytes := base58check.Decode(privateKeyBase58)
-	publicKeyBytes, err := btcutils.NewPublicKey(privateKeyBytes)
+func signRawTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey []byte) ([]byte, error) {
+	publicKey, err := btcutils.NewPublicKey(privateKey)
 	if err != nil {
 		return nil, err
 	}
-
-	signature, err := btcutils.NewSignature(rawTransaction, privateKeyBytes)
+	signature, err := btcutils.NewSignature(rawTransaction, privateKey)
 	if err != nil {
 		return nil, err
 	}
-
 	hashCodeType, err := hex.DecodeString("01")
 	if err != nil {
 		return nil, err
@@ -89,7 +87,7 @@ func signRawTransaction(rawTransaction []byte, privateKeyBase58 string, scriptPu
 	signatureLength := byte(len(signature) + 1)
 
 	var publicKeyBuffer bytes.Buffer
-	publicKeyBuffer.Write(publicKeyBytes)
+	publicKeyBuffer.Write(publicKey)
 	pubKeyLength := byte(len(publicKeyBuffer.Bytes()))
 
 	var buffer bytes.Buffer

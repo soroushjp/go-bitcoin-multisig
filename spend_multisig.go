@@ -39,9 +39,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//Get private key as decoded raw bytes
+	privateKey1 := base58check.Decode(flagPrivateKey1)
+	privateKey2 := base58check.Decode(flagPrivateKey2)
 	//Create scriptPubKey with provided destination public key
-	publicKeyHashBytes := base58check.Decode(flagDestination)
-	scriptPubKey = btcutils.NewP2PKHScriptPubKey(publicKeyHashBytes)
+	publicKeyHash := base58check.Decode(flagDestination)
+	scriptPubKey = btcutils.NewP2PKHScriptPubKey(publicKeyHash)
 	//Create unsigned raw transaction
 	//scriptSig in unsigned transaction is serialized redeemScript of input P2SH transaction.
 	rawTransaction, err := btcutils.NewRawTransaction(flagInputTransaction, flagSatoshis, redeemScript, scriptPubKey)
@@ -59,7 +62,7 @@ func main() {
 	rawTransactionBuffer.Write(hashCodeType)
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
 	//Sign the raw transaction, and output it to the console.
-	finalTransaction, err := signRawTransaction(rawTransactionWithHashCodeType, flagPrivateKey1, flagPrivateKey2, redeemScript)
+	finalTransaction, err := signRawTransaction(rawTransactionWithHashCodeType, privateKey1, privateKey2, redeemScript)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,17 +72,15 @@ func main() {
 	fmt.Println(finalTransactionHex)
 }
 
-func signRawTransaction(rawTransaction []byte, firstPrivateKeyBase58 string, secondPrivateKeyBase58 string, redeemScript []byte) ([]byte, error) {
-
-	firstSignature, err := btcutils.NewSignature(rawTransaction, base58check.Decode(firstPrivateKeyBase58))
+func signRawTransaction(rawTransaction []byte, firstPrivateKey []byte, secondPrivateKey []byte, redeemScript []byte) ([]byte, error) {
+	firstSignature, err := btcutils.NewSignature(rawTransaction, firstPrivateKey)
 	if err != nil {
 		return nil, err
 	}
-	secondSignature, err := btcutils.NewSignature(rawTransaction, base58check.Decode(secondPrivateKeyBase58))
+	secondSignature, err := btcutils.NewSignature(rawTransaction, secondPrivateKey)
 	if err != nil {
 		return nil, err
 	}
-
 	hashCodeType, err := hex.DecodeString("01")
 	if err != nil {
 		return nil, err

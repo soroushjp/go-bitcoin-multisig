@@ -44,23 +44,23 @@ func NewPrivateKey() []byte {
 	return bytes
 }
 
-func NewPublicKey(privateKeyBytes []byte) ([]byte, error) {
+func NewPublicKey(privateKey []byte) ([]byte, error) {
 	//Generate the public key from the private key.
 	//Unfortunately golang ecdsa package does not include a
 	//secp256k1 curve as this is fairly specific to bitcoin
 	//as I understand it, so I have used this one by toxeus which wraps the official bitcoin/c-secp256k1 with cgo.
-	var privateKeyBytes32 [32]byte
+	var privateKey32 [32]byte
 	for i := 0; i < 32; i++ {
-		privateKeyBytes32[i] = privateKeyBytes[i]
+		privateKey32[i] = privateKey[i]
 	}
 	secp256k1.Start()
-	publicKeyBytes, success := secp256k1.Pubkey_create(privateKeyBytes32, false)
+	publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
 	if !success {
 		return nil, errors.New("Failed to create public key from provided private key bytes.")
 	}
 	secp256k1.Stop()
 
-	return publicKeyBytes, nil
+	return publicKey, nil
 
 }
 
@@ -91,26 +91,26 @@ func NewP2SHScriptPubKey(redeemScriptHash []byte) ([]byte, error) {
 	return scriptPubKey.Bytes(), nil
 }
 
-func NewP2PKHScriptPubKey(publicKeyHashBytes []byte) []byte {
+func NewP2PKHScriptPubKey(publicKeyHash []byte) []byte {
 	var scriptPubKey bytes.Buffer
-	scriptPubKey.WriteByte(byte(118))                     //OP_DUP
-	scriptPubKey.WriteByte(byte(169))                     //OP_HASH160
-	scriptPubKey.WriteByte(byte(len(publicKeyHashBytes))) //PUSH
-	scriptPubKey.Write(publicKeyHashBytes)
+	scriptPubKey.WriteByte(byte(118))                //OP_DUP
+	scriptPubKey.WriteByte(byte(169))                //OP_HASH160
+	scriptPubKey.WriteByte(byte(len(publicKeyHash))) //PUSH
+	scriptPubKey.Write(publicKeyHash)
 	scriptPubKey.WriteByte(byte(136)) //OP_EQUALVERIFY
 	scriptPubKey.WriteByte(byte(172)) //OP_CHECKSIG
 
 	return scriptPubKey.Bytes()
 }
 
-func Hash160(hashBytes []byte) ([]byte, error) {
+func Hash160(data []byte) ([]byte, error) {
 	//Does identical function to Script OP_HASH160. Hash once with SHA-256, then RIPEMD-160
-	if hashBytes == nil {
+	if data == nil {
 		return nil, errors.New("Empty bytes cannot be hashed")
 	}
 	shaHash := sha256.New()
-	shaHash.Write(hashBytes)
-	var hash []byte = shaHash.Sum(nil) //SHA256 first
+	shaHash.Write(data)
+	hash := shaHash.Sum(nil) //SHA256 first
 	ripemd160Hash := ripemd160.New()
 	ripemd160Hash.Write(hash)
 	hash = ripemd160Hash.Sum(nil) //RIPEMD160 second
@@ -193,16 +193,16 @@ func NewRawTransaction(inputTransactionHash string, satoshis int, scriptSig []by
 	return buffer.Bytes(), nil
 }
 
-func NewSignature(rawTransaction []byte, privateKeyBytes []byte) ([]byte, error) {
+func NewSignature(rawTransaction []byte, privateKey []byte) ([]byte, error) {
 
 	secp256k1.Start()
-	var privateKeyBytes32 [32]byte
+	var privateKey32 [32]byte
 	for i := 0; i < 32; i++ {
-		privateKeyBytes32[i] = privateKeyBytes[i]
+		privateKey32[i] = privateKey[i]
 	}
 
 	//Get the raw public key
-	publicKeyBytes, success := secp256k1.Pubkey_create(privateKeyBytes32, false)
+	publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
 	if !success {
 		return nil, errors.New("Failed to convert private key to public key")
 	}
@@ -217,13 +217,13 @@ func NewSignature(rawTransaction []byte, privateKeyBytes []byte) ([]byte, error)
 	rawTransactionHashed := shaHash2.Sum(nil)
 
 	//Sign the raw transaction
-	signedTransaction, success := secp256k1.Sign(rawTransactionHashed, privateKeyBytes32, newNonce())
+	signedTransaction, success := secp256k1.Sign(rawTransactionHashed, privateKey32, newNonce())
 	if !success {
 		return nil, errors.New("Failed to sign transaction")
 	}
 
 	//Verify that it worked.
-	verified := secp256k1.Verify(rawTransactionHashed, signedTransaction, publicKeyBytes)
+	verified := secp256k1.Verify(rawTransactionHashed, signedTransaction, publicKey)
 	if !verified {
 		return nil, errors.New("Failed to verify signed transaction")
 	}
