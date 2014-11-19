@@ -12,7 +12,7 @@ import (
 )
 
 var flagPrivateKey string
-var flagPublicKey string
+var flagPublicAddress string
 var flagInputTransaction string
 var flagSatoshis int
 var flagP2SHDestination string
@@ -20,7 +20,7 @@ var flagP2SHDestination string
 func main() {
 	//Parse flags
 	flag.StringVar(&flagPrivateKey, "private-key", "", "Private key of bitcoin to send.")
-	flag.StringVar(&flagPublicKey, "public-key", "", "Public address of bitcoin to send.")
+	flag.StringVar(&flagPublicAddress, "public-address", "", "Public address of bitcoin to send.")
 	flag.StringVar(&flagInputTransaction, "input-transaction", "", "Input transaction hash of bitcoin to send.")
 	flag.IntVar(&flagSatoshis, "satoshis", 0, "Amount of bitcoin to send in satoshi (100,000,000 satoshi = 1 bitcoin).")
 	flag.StringVar(&flagP2SHDestination, "destination", "", "Destination address. For P2SH, this should start with '3'.")
@@ -30,7 +30,7 @@ func main() {
 	//In order to construct the raw transaction we need the input transaction hash,
 	//the destination address, the number of satoshis to send, and the scriptSig
 	//which is temporarily (prior to signing) the ScriptPubKey of the input transaction.
-	tempScriptSig := btcutils.NewP2PKHScriptPubKey(base58check.Decode(flagPublicKey))
+	tempScriptSig := btcutils.NewP2PKHScriptPubKey(base58check.Decode(flagPublicAddress))
 
 	redeemScriptHash := base58check.Decode(flagP2SHDestination)
 
