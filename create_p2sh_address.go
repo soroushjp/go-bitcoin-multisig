@@ -1,21 +1,21 @@
 package main
 
 import (
+	"github.com/soroushjp/go-bitcoin-multisig/base58check"
+	"github.com/soroushjp/go-bitcoin-multisig/btcutils"
+
 	"encoding/hex"
 	"fmt"
 	"log"
-
-	"github.com/soroushjp/hellobitcoin/base58check"
-	"github.com/soroushjp/hellobitcoin/btcutils"
 )
 
 func main() {
 
-	//Temporary generate two public keys. This should be a flag for users to give public keys in hex format
-	privateKey1 := btcutils.GeneratePrivateKey()
-	privateKey2 := btcutils.GeneratePrivateKey()
-	publicKey1 := btcutils.GeneratePublicKey(privateKey1)
-	publicKey2 := btcutils.GeneratePublicKey(privateKey2)
+	//Temporary generate two public keys. This should be an input argument for users to give public keys in hex format
+	privateKey1 := btcutils.NewPrivateKey()
+	privateKey2 := btcutils.NewPrivateKey()
+	publicKey1, _ := btcutils.NewPublicKey(privateKey1)
+	publicKey2, _ := btcutils.NewPublicKey(privateKey2)
 	publicKeyHex1 := hex.EncodeToString(publicKey1)
 	publicKeyHex2 := hex.EncodeToString(publicKey2)
 
@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	redeemScript := btcutils.CreateTwoOfTwoRedeemScript(publicKeyBytes1, publicKeyBytes2)
+	redeemScript := btcutils.NewTwoOfTwoRedeemScript(publicKeyBytes1, publicKeyBytes2)
 	redeemScriptHash, err := btcutils.Hash160(redeemScript)
 	if err != nil {
 		log.Fatal(err)

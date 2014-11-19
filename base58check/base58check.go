@@ -7,7 +7,7 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/soroushjp/hellobitcoin/base58check/base58"
+	"github.com/soroushjp/go-bitcoin-multisig/base58check/base58"
 )
 
 func Encode(prefix string, byteData []byte) string {
