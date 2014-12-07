@@ -59,7 +59,7 @@ func main() {
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
 
 	//Sign the raw transaction, and output it to the console.
-	finalTransaction, err := signRawTransaction(rawTransactionWithHashCodeType, privateKey, scriptPubKey)
+	finalTransaction, err := signP2PKHTransaction(rawTransactionWithHashCodeType, privateKey, scriptPubKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,7 +69,7 @@ func main() {
 	fmt.Println(finalTransactionHex)
 }
 
-func signRawTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey []byte) ([]byte, error) {
+func signP2PKHTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey []byte) ([]byte, error) {
 	publicKey, err := btcutils.NewPublicKey(privateKey)
 	if err != nil {
 		return nil, err
