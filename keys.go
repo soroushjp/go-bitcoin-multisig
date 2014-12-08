@@ -24,7 +24,7 @@ func main() {
 	fmt.Println("----------------------------------------------------------------------")
 	fmt.Println("THESE KEY PAIRS ARE PSEUDORANDOM. FOR DEMONSTRATION PURPOSES ONLY.")
 	fmt.Println("----------------------------------------------------------------------")
-	fmt.Println("Each generated keypair includes: ")
+	fmt.Println("Each generated key pair includes: ")
 	fmt.Println("* Your private key\t\t\t-- Keep this private, needed to spend received Bitcoins.")
 	fmt.Println("* Your public key\t\t\t-- in HEX format. This is required to generate multisig destination address.")
 	fmt.Println("* Your public destination address\t-- Give this to other people to send you Bitcoins.")
