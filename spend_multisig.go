@@ -109,13 +109,13 @@ func signMultisigTransaction(rawTransaction []byte, orderedPrivateKeys [][]byte,
 	}
 	//Create scriptSig
 	var buffer bytes.Buffer
-	buffer.WriteByte(byte(0)) //OP_0 for Multisig off-by-one error
+	buffer.WriteByte(byte(OP_0)) //OP_0 for Multisig off-by-one error
 	for _, signature := range signatures {
 		buffer.WriteByte(byte(len(signature) + 1)) //PUSH each signature. Add one for hash type byte
 		buffer.Write(signature)                    // Signature bytes
 		buffer.WriteByte(hashCodeType[0])          //hash type
 	}
-	buffer.WriteByte(byte(76))                //OP_76, since we are pushing >75 bytes to stack with redeemScript
+	buffer.WriteByte(byte(OP_PUSHDATA1))      //OP_76, since we are pushing >75 bytes to stack with redeemScript
 	buffer.WriteByte(byte(len(redeemScript))) //PUSH redeemScript
 	buffer.Write(redeemScript)                //redeemScript
 	scriptSig := buffer.Bytes()
