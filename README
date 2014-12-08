@@ -1,9 +1,13 @@
 Bitcoin M-of-N Multisig P2SH implemented in Go
 ----------------------------------------------
 
-Work in progress. Current master branch will generate a M-of-N P2SH multisig address with create_multisig_address.go, which can be funded with fund_p2sh.go and spent with spend_multisig.go. Keys.go can be used to generate public/private keypairs as needed.
+Under development, but tested and working Go implementation of P2SH multisig transaction.
+
+Current master branch will generate a M-of-N P2SH multisig address with create_multisig_address.go, which can be funded with fund_p2sh.go and spent with spend_multisig.go. Keys.go can be used to generate public/private keypairs as needed.
 
 All transactions are native Go raw Bitcoin transactions. There is no need to run bitcoind or another Bitcoin node for use.
+
+Documentation arriving shortly after coming updates to CLI inteface, but feel free to contact at me _ AT_ soroushjp.com if you'd like to use parts of this code immediately.
 
 MIT License
 
