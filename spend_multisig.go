@@ -5,6 +5,7 @@ import (
 	"github.com/soroushjp/go-bitcoin-multisig/btcutils"
 
 	"bytes"
+	"encoding/binary"
 	"encoding/csv"
 	"encoding/hex"
 	"flag"
@@ -107,17 +108,28 @@ func signMultisigTransaction(rawTransaction []byte, orderedPrivateKeys [][]byte,
 			return nil, err
 		}
 	}
+	//redeemScript length. To allow redeemScript > 255 bytes, we use OP_PUSHDATA2 and use two bytes to specify length
+	var redeemScriptLengthBytes []byte
+	var requiredOP_PUSHDATA int
+	if len(redeemScript) < 255 {
+		requiredOP_PUSHDATA = btcutils.OP_PUSHDATA1 //OP_PUSHDATA1 specifies next *one byte* will be length to be pushed to stack
+		redeemScriptLengthBytes = []byte{byte(len(redeemScript))}
+	} else {
+		requiredOP_PUSHDATA = btcutils.OP_PUSHDATA2 //OP_PUSHDATA2 specifies next *two bytes* will be length to be pushed to stack
+		redeemScriptLengthBytes = make([]byte, 2)
+		binary.LittleEndian.PutUint16(redeemScriptLengthBytes, uint16(len(redeemScript)))
+	}
 	//Create scriptSig
 	var buffer bytes.Buffer
-	buffer.WriteByte(byte(OP_0)) //OP_0 for Multisig off-by-one error
+	buffer.WriteByte(byte(btcutils.OP_0)) //OP_0 for Multisig off-by-one error
 	for _, signature := range signatures {
 		buffer.WriteByte(byte(len(signature) + 1)) //PUSH each signature. Add one for hash type byte
 		buffer.Write(signature)                    // Signature bytes
 		buffer.WriteByte(hashCodeType[0])          //hash type
 	}
-	buffer.WriteByte(byte(OP_PUSHDATA1))      //OP_76, since we are pushing >75 bytes to stack with redeemScript
-	buffer.WriteByte(byte(len(redeemScript))) //PUSH redeemScript
-	buffer.Write(redeemScript)                //redeemScript
+	buffer.WriteByte(byte(requiredOP_PUSHDATA)) //OP_PUSHDATA1 or OP_PUSHDATA2 depending on size of redeemScript
+	buffer.Write(redeemScriptLengthBytes)       //PUSH redeemScript
+	buffer.Write(redeemScript)                  //redeemScript
 	scriptSig := buffer.Bytes()
 	//Finally create transaction with actual scriptSig
 	signedRawTransaction, err := btcutils.NewRawTransaction(flagInputTransaction, flagSatoshis, scriptSig, scriptPubKey)

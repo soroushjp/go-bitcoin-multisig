@@ -73,6 +73,13 @@ func NewMOfNRedeemScript(m int, n int, publicKeys [][]byte) ([]byte, error) {
 	if m < 1 || m > n {
 		return nil, errors.New("M must be between 1 and N (inclusive).")
 	}
+	if m*73+n*66 > 496 {
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
+		fmt.Printf("WARNING: %d-of-%d multisig transaction is valid but *non-standard* P2SH multisig transaction for Bitcoin v0.9.x and earlier.\n", m, n)
+		fmt.Println("It may take a very long time (possibly never) for transaction spending multisig funds to be included in a block.")
+		fmt.Println("To remain valid, choose smaller m and n values such that m*73+n*66 <= 496, as per standardness rules.")
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
+	}
 	//Check we have N public keys as necessary.
 	if len(publicKeys) != n {
 		return nil, errors.New(fmt.Sprintf("Need exactly %d public keys to create P2SH address for %d-of-%d multisig transaction. Only %d keys provided.", n, m, n, len(publicKeys)))
