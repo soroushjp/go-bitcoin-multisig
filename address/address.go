@@ -1,4 +1,4 @@
-package main
+package address
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
@@ -6,28 +6,12 @@ import (
 
 	"encoding/csv"
 	"encoding/hex"
-	"flag"
 	"fmt"
 	"log"
 	"strings"
 )
 
-var flagPublicKeys string
-var flagM int
-var flagN int
-
-const REQUIRED_FLAG_COUNT = 3
-
-func main() {
-	//Parse flags
-	flag.IntVar(&flagM, "m", 0, "M, the minimum number of keys needed to spend Bitcoin in M-of-N multisig transaction.")
-	flag.IntVar(&flagN, "n", 0, "N, the total number of possible keys that can be used to spend Bitcoin in M-of-N multisig transaction.")
-	flag.StringVar(&flagPublicKeys, "public-keys", "", "Comma separated list of private keys to sign with. Whitespace is stripped and quotes may be placed around keys. Eg. key1,key2,\"key3\" .")
-	flag.Parse()
-	if flag.NFlag() != REQUIRED_FLAG_COUNT {
-		//We only need to check flag count because Go will automatically throw an error for undefined flags
-		log.Fatal("Please provide all required flags.")
-	}
+func Start(flagM int, flagN int, flagPublicKeys string) {
 	//Convert public keys argument into slice of public key bytes with necessary tidying
 	flagPublicKeys = strings.Replace(flagPublicKeys, "'", "\"", -1) //Replace single quotes with double since csv package only recognizes double quotes
 	publicKeyStrings, err := csv.NewReader(strings.NewReader(flagPublicKeys)).Read()

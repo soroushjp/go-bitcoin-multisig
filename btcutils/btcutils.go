@@ -175,7 +175,7 @@ func Hash160(data []byte) ([]byte, error) {
 }
 
 //NewRawTransaction creates a Bitcoin transaction given inputs, output satoshi amount, scriptSig and scriptPubKey
-func NewRawTransaction(inputTransactionHash string, satoshis int, scriptSig []byte, scriptPubKey []byte) ([]byte, error) {
+func NewRawTransaction(inputTxHash string, satoshis int, scriptSig []byte, scriptPubKey []byte) ([]byte, error) {
 	//Version field
 	version, err := hex.DecodeString("01000000")
 	if err != nil {
@@ -187,14 +187,14 @@ func NewRawTransaction(inputTransactionHash string, satoshis int, scriptSig []by
 		return nil, err
 	}
 	//Input transaction hash
-	inputTransactionBytes, err := hex.DecodeString(inputTransactionHash)
+	inputTxBytes, err := hex.DecodeString(inputTxHash)
 	if err != nil {
 		return nil, err
 	}
 	//Convert input transaction hash to little-endian form
-	inputTransactionBytesReversed := make([]byte, len(inputTransactionBytes))
-	for i := 0; i < len(inputTransactionBytes); i++ {
-		inputTransactionBytesReversed[i] = inputTransactionBytes[len(inputTransactionBytes)-i-1]
+	inputTxBytesReversed := make([]byte, len(inputTxBytes))
+	for i := 0; i < len(inputTxBytes); i++ {
+		inputTxBytesReversed[i] = inputTxBytes[len(inputTxBytes)-i-1]
 	}
 	//Ouput index of input transaction
 	outputIndex, err := hex.DecodeString("00000000")
@@ -234,7 +234,7 @@ func NewRawTransaction(inputTransactionHash string, satoshis int, scriptSig []by
 	var buffer bytes.Buffer
 	buffer.Write(version)
 	buffer.Write(inputs)
-	buffer.Write(inputTransactionBytesReversed)
+	buffer.Write(inputTxBytesReversed)
 	buffer.Write(outputIndex)
 	buffer.Write(scriptSigLengthBytes)
 	buffer.Write(scriptSig)

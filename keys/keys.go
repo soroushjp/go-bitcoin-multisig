@@ -1,29 +1,21 @@
-package main
+package keys
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
 	"github.com/soroushjp/go-bitcoin-multisig/btcutils"
 
 	"encoding/hex"
-	"flag"
 	"fmt"
 	"log"
 )
 
-var flagKeyCount int
-var flagVerbose bool
-
-func main() {
-
-	flag.IntVar(&flagKeyCount, "count", 1, "No. of key pairs to generate. Default is 1")
-	flag.BoolVar(&flagVerbose, "verbose", true, "Turn on/off verbose output. Default is true")
-	flag.Parse()
+func Start(flagKeyCount int, flagConcise bool) {
 
 	if flagKeyCount < 1 || flagKeyCount > 100 {
 		log.Fatal("--count <count> must be between 1 and 100")
 	}
 
-	if flagVerbose {
+	if !flagConcise {
 		fmt.Println("----------------------------------------------------------------------")
 		fmt.Println("THESE KEY PAIRS ARE PSEUDORANDOM. FOR DEMONSTRATION PURPOSES ONLY.")
 		fmt.Println("----------------------------------------------------------------------")
@@ -57,17 +49,17 @@ func main() {
 		//Output private key in WIF format, public key as hex and P2PKH public address
 		fmt.Println("--------------")
 		fmt.Printf("KEY #%d\n", i+1)
-		if flagVerbose {
+		if !flagConcise {
 			fmt.Println("")
 		}
 		fmt.Println("Private key: ")
 		fmt.Println(privateKeyWIF)
-		if flagVerbose {
+		if !flagConcise {
 			fmt.Println("")
 		}
 		fmt.Println("Public key hex: ")
 		fmt.Println(publicKeyHex)
-		if flagVerbose {
+		if !flagConcise {
 			fmt.Println("")
 		}
 		fmt.Println("Public Bitcoin address: ")

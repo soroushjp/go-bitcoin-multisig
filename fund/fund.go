@@ -1,4 +1,4 @@
-package main
+package fund
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
@@ -6,29 +6,12 @@ import (
 
 	"bytes"
 	"encoding/hex"
-	"flag"
 	"fmt"
 	"log"
 )
 
-var flagPrivateKey string
-var flagInputTransaction string
-var flagSatoshis int
-var flagP2SHDestination string
+func Start(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
 
-const REQUIRED_FLAG_COUNT = 4
-
-func main() {
-	//Parse flags
-	flag.StringVar(&flagPrivateKey, "private-key", "", "Private key of bitcoin to send.")
-	flag.StringVar(&flagInputTransaction, "input-transaction", "", "Input transaction hash of bitcoin to send.")
-	flag.IntVar(&flagSatoshis, "satoshis", 0, "Amount of bitcoin to send in satoshi (100,000,000 satoshi = 1 bitcoin).")
-	flag.StringVar(&flagP2SHDestination, "destination", "", "Destination address. For P2SH, this should start with '3'.")
-	flag.Parse()
-	if flag.NFlag() != REQUIRED_FLAG_COUNT {
-		//We only need to check flag count because Go will automatically throw an error for undefined flags
-		log.Fatal("Please provide all required flags.")
-	}
 	//Get private key as decoded raw bytes
 	privateKey := base58check.Decode(flagPrivateKey)
 	//In order to construct the raw transaction we need the input transaction hash,
@@ -53,7 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 	//Create unsigned raw transaction
-	rawTransaction, err := btcutils.NewRawTransaction(flagInputTransaction, flagSatoshis, tempScriptSig, scriptPubKey)
+	rawTransaction, err := btcutils.NewRawTransaction(flagInputTx, flagAmount, tempScriptSig, scriptPubKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +51,7 @@ func main() {
 	rawTransactionBuffer.Write(hashCodeType)
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
 	//Sign the raw transaction, and output it to the console.
-	finalTransaction, err := signP2PKHTransaction(rawTransactionWithHashCodeType, privateKey, scriptPubKey)
+	finalTransaction, err := signP2PKHTransaction(rawTransactionWithHashCodeType, privateKey, scriptPubKey, flagInputTx, flagAmount)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,7 +61,7 @@ func main() {
 	fmt.Println(finalTransactionHex)
 }
 
-func signP2PKHTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey []byte) ([]byte, error) {
+func signP2PKHTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey []byte, inputTx string, amount int) ([]byte, error) {
 	publicKey, err := btcutils.NewPublicKey(privateKey)
 	if err != nil {
 		return nil, err
@@ -102,7 +85,7 @@ func signP2PKHTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey
 	buffer.Write(publicKey)
 	scriptSig := buffer.Bytes()
 	//Finally create transaction with actual scriptSig
-	signedRawTransaction, err := btcutils.NewRawTransaction(flagInputTransaction, flagSatoshis, scriptSig, scriptPubKey)
+	signedRawTransaction, err := btcutils.NewRawTransaction(inputTx, amount, scriptSig, scriptPubKey)
 	if err != nil {
 		return nil, err
 	}
