@@ -25,7 +25,6 @@ go get github.com/soroushjp/go-bitcoin-multisig
 cd $GOPATH/src/github.com/soroushjp/go-bitcoin-multisig/
 
 go install
-
 ```
 
 And that's it! Now you can run the binary:
@@ -55,7 +54,7 @@ Optional Flags:
   --count=1  No. of key pairs to generate.
   --concise  Turn on concise output. Default is off (verbose output).
 
-Example:
+*Example:*
 
 ```bash
 go-bitcoin-multisig keys --count 3 --concise
@@ -67,7 +66,7 @@ go-bitcoin-multisig keys --count 3 --concise
 go-bitcoin-multisig address --m=M --n=N --public-keys=PUBLIC-KEYS(Comma separated, Hex format)
 ```
 
-Example: (2-of-3 Multisig)
+*Example:* (2-of-3 Multisig)
 
 ```bash
 go-bitcoin-multisig address --m 2 --n 3 --public-keys 04a882d414e478039cd5b52a92ffb13dd5e6bd4515497439dffd691a0f12af9575fa349b5694ed3155b136f09e63975a1700c9f4d4df849323dac06cf3bd6458cd,046ce31db9bdd543e72fe3039a1f1c047dab87037c36a669ff90e28da1848f640de68c2fe913d363a51154a0c62d7adea1b822d05035077418267b1a1379790187,0411ffd36c70776538d079fbae117dc38effafb33304af83ce4894589747aee1ef992f63280567f52f5ba870678b4ab4ff6c8ea600bd217870a8b4f1f09f3a8e83 
@@ -79,7 +78,7 @@ go-bitcoin-multisig address --m 2 --n 3 --public-keys 04a882d414e478039cd5b52a92
 go-bitcoin-multisig fund --private-key=PRIVATE-KEY --input-tx=INPUT-TX --amount=AMOUNT --destination=DESTINATION
 ```
 
-Example:
+*Example:*
 
 ```bash
 go-bitcoin-multisig fund --input-tx 3ad337270ac0ba14fbce812291b7d95338c878709ea8123a4d88c3c29efbc6ac --private-key 5JJyqG4bb15zqi7fTA4b227aUxQhBo1Ux6qX69ngeXYLr7fk2hs --destination 347N1Thc213QqfYCz3PZkjoJpNv5b14kBd --amount 65600
@@ -91,7 +90,7 @@ go-bitcoin-multisig fund --input-tx 3ad337270ac0ba14fbce812291b7d95338c878709ea8
 go-bitcoin-multisig spend --private-keys=PRIVATE-KEYS(Comma separated) --destination=DESTINATION --redeemScript=REDEEMSCRIPT --input-tx=INPUT-TX --amount=AMOUNT
 ```
 
-Example:
+*Example:*
 
 ```bash
 go-bitcoin-multisig spend --input-tx 02b082113e35d5386285094c2829e7e2963fa0b5369fb7f4b79c4c90877dcd3d --amount 55600 --destination 18tiB1yNTzJMCg6bQS1Eh29dvJngq8QTfx --private-keys 5JruagvxNLXTnkksyLMfgFgf3CagJ3Ekxu5oGxpTm5mPfTAPez3,5JjHVMwJdjPEPQhq34WMUhzLcEd4SD7HgZktEh8WHstWcCLRceV --redeemScript 524104a882d414e478039cd5b52a92ffb13dd5e6bd4515497439dffd691a0f12af9575fa349b5694ed3155b136f09e63975a1700c9f4d4df849323dac06cf3bd6458cd41046ce31db9bdd543e72fe3039a1f1c047dab87037c36a669ff90e28da1848f640de68c2fe913d363a51154a0c62d7adea1b822d05035077418267b1a1379790187410411ffd36c70776538d079fbae117dc38effafb33304af83ce4894589747aee1ef992f63280567f52f5ba870678b4ab4ff6c8ea600bd217870a8b4f1f09f3a8e8353ae
@@ -114,7 +113,7 @@ go-bitcoin-multisig spend --input-tx 02b082113e35d5386285094c2829e7e2963fa0b5369
 
 ##License
 
-go-bitcoin-multisig project is released under the terms of the MIT license. See LICENSE for attributions.
+go-bitcoin-multisig project is released under the terms of the MIT license. Thank you to [prettymuchbryce for his hellobitcoin project](https://github.com/prettymuchbryce/hellobitcoin) which provided both early code and inspiration for this project.
 
 ##Find out more
 
