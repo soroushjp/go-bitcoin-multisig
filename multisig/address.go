@@ -23,7 +23,7 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 		publicKeyString = strings.TrimSpace(publicKeyString)   //Trim whitespace
 		publicKeys[i], err = hex.DecodeString(publicKeyString) //Get private keys as slice of raw bytes
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err, "\n", "Offending publicKey: \n", publicKeyString)
 		}
 	}
 	//Create redeemScript from public keys
