@@ -1,10 +1,7 @@
 package main
 
 import (
-	"github.com/soroushjp/go-bitcoin-multisig/address"
-	"github.com/soroushjp/go-bitcoin-multisig/fund"
-	"github.com/soroushjp/go-bitcoin-multisig/keys"
-	"github.com/soroushjp/go-bitcoin-multisig/spend"
+	"github.com/soroushjp/go-bitcoin-multisig/multisig"
 
 	"os"
 
@@ -42,16 +39,16 @@ func main() {
 
 	//keys -- Generate public/private key pairs
 	case cmdKeys.FullCommand():
-		keys.Start(*cmdKeysCount, *cmdKeysConcise)
+		multisig.GenerateKeys(*cmdKeysCount, *cmdKeysConcise)
 
 	//address -- Create a P2SH address
 	case cmdAddress.FullCommand():
-		address.Start(*cmdAddressM, *cmdAddressN, *cmdAddressPublicKeys)
+		multisig.GenerateAddress(*cmdAddressM, *cmdAddressN, *cmdAddressPublicKeys)
 
 	case cmdFund.FullCommand():
-		fund.Start(*cmdFundPrivateKey, *cmdFundInputTx, *cmdFundAmount, *cmdFundDestination)
+		multisig.GenerateFund(*cmdFundPrivateKey, *cmdFundInputTx, *cmdFundAmount, *cmdFundDestination)
 
 	case cmdSpend.FullCommand():
-		spend.Start(*cmdSpendPrivateKeys, *cmdSpendDestination, *cmdSpendRedeemScript, *cmdSpendInputTx, *cmdSpendAmount)
+		multisig.GenerateSpend(*cmdSpendPrivateKeys, *cmdSpendDestination, *cmdSpendRedeemScript, *cmdSpendInputTx, *cmdSpendAmount)
 	}
 }

@@ -1,4 +1,4 @@
-package spend
+package multisig
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func Start(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
+func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
 	//First we create the raw transaction.
 	//In order to construct the raw transaction we need the input transaction hash,
 	//the destination address, the number of satoshis to send, and the scriptSig

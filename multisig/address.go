@@ -1,4 +1,4 @@
-package address
+package multisig
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func Start(flagM int, flagN int, flagPublicKeys string) {
+func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 	//Convert public keys argument into slice of public key bytes with necessary tidying
 	flagPublicKeys = strings.Replace(flagPublicKeys, "'", "\"", -1) //Replace single quotes with double since csv package only recognizes double quotes
 	publicKeyStrings, err := csv.NewReader(strings.NewReader(flagPublicKeys)).Read()

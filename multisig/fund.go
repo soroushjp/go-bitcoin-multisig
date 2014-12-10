@@ -1,4 +1,4 @@
-package fund
+package multisig
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func Start(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
+func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
 
 	//Get private key as decoded raw bytes
 	privateKey := base58check.Decode(flagPrivateKey)

@@ -1,4 +1,4 @@
-package keys
+package multisig
 
 import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-func Start(flagKeyCount int, flagConcise bool) {
+func GenerateKeys(flagKeyCount int, flagConcise bool) {
 
 	if flagKeyCount < 1 || flagKeyCount > 100 {
 		log.Fatal("--count <count> must be between 1 and 100")
