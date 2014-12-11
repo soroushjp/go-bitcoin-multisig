@@ -1,5 +1,5 @@
-go-bitcoin-multisig
-===================
+# go-bitcoin-multisig [![GoDoc](https://godoc.org/github.com/soroushjp/go-bitcoin-multisig?status.svg)](https://godoc.org/github.com/soroushjp/go-bitcoin-multisig)
+
 Bitcoin [M-of-N Multisig](https://bitcoin.org/en/developer-guide#escrow-and-arbitration) Pay-to-ScriptHash (P2SH) Transaction Builder, built in [Go](https://golang.org/)
 
 ##Features
@@ -17,7 +17,9 @@ Bitcoin [M-of-N Multisig](https://bitcoin.org/en/developer-guide#escrow-and-arbi
 
 ##Build instructions
 
-If you have your Go environment set up in the [usual way](https://golang.org/doc/code.html), simply run:
+First, follow the instructions at [go-secp256k1](https://github.com/toxeus/go-secp256k1) to compile bitcoin/c-secp256k1, which is required for go-bitcoin-multisig.
+
+Next, if you have your Go environment set up in the [usual way](https://golang.org/doc/code.html), simply run:
 
 ```bash
 go get github.com/soroushjp/go-bitcoin-multisig

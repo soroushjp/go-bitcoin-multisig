@@ -1,3 +1,4 @@
+// keys.go - Generating public/private key pairs.
 package multisig
 
 import (
@@ -9,6 +10,9 @@ import (
 	"log"
 )
 
+// GenerateKeys is the main thread for generating public/private key pairs with the 'go-bitcoin-multisig keys' subcommand.
+// Takes flagCount (desired number of key pairs) and flagConcise (true hides warnings and helpful messages for conciseness)
+// as arguments.
 func GenerateKeys(flagKeyCount int, flagConcise bool) {
 
 	if flagKeyCount < 1 || flagKeyCount > 100 {

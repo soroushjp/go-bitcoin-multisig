@@ -1,3 +1,6 @@
+// Package multisig contains the main starting threads for each of the subcommands for go-bitcoin-multisig.
+//
+// address.go - Generating P2SH addresses.
 package multisig
 
 import (
@@ -11,6 +14,9 @@ import (
 	"strings"
 )
 
+// GenerateAddress is the main thread for creating P2SH multisig addresses with the 'go-bitcoin-multisig address' subcommand.
+// Takes flagM (number of keys required to spend), flagN (total number of keys)
+// and flagPublicKeys (comma separated list of N public keys) as arguments.
 func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 	//Convert public keys argument into slice of public key bytes with necessary tidying
 	flagPublicKeys = strings.Replace(flagPublicKeys, "'", "\"", -1) //Replace single quotes with double since csv package only recognizes double quotes

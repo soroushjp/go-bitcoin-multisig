@@ -1,3 +1,5 @@
+// Package btcutils contains a number of useful Bitcoin related functions originally used in the go-bitcoin-multisig
+// project but useful in any general Bitcoin project.
 package btcutils
 
 import (
@@ -34,7 +36,7 @@ func newNonce() [32]byte {
 	return bytes
 }
 
-//NewPrivateKey generates a pseudorandom private key compatible with ECDSA. *NOT* "cryptographically random".
+// NewPrivateKey generates a pseudorandom private key compatible with ECDSA. *NOT* "cryptographically random".
 func NewPrivateKey() []byte {
 	bytes := make([]byte, 32)
 	for i := 0; i < 32; i++ {
@@ -64,7 +66,7 @@ func NewPublicKey(privateKey []byte) ([]byte, error) {
 	return publicKey, nil
 }
 
-//NewMOfNRedeemScript creates a M-of-N Multisig redeem script given m, n and n public keys
+// NewMOfNRedeemScript creates a M-of-N Multisig redeem script given m, n and n public keys
 func NewMOfNRedeemScript(m int, n int, publicKeys [][]byte) ([]byte, error) {
 	//Check we have valid numbers for M and N
 	if n < 1 || n > 7 {
@@ -125,7 +127,7 @@ func CheckPublicKeyIsValid(publicKey []byte) error {
 	return nil
 }
 
-//NewP2SHScriptPubKey creates a scriptPubKey for a P2SH transaction given the redeemScript hash
+// NewP2SHScriptPubKey creates a scriptPubKey for a P2SH transaction given the redeemScript hash
 func NewP2SHScriptPubKey(redeemScriptHash []byte) ([]byte, error) {
 	if redeemScriptHash == nil {
 		return nil, errors.New("redeemScriptHash can't be empty.")
@@ -140,7 +142,7 @@ func NewP2SHScriptPubKey(redeemScriptHash []byte) ([]byte, error) {
 	return scriptPubKey.Bytes(), nil
 }
 
-//NewP2PKHScriptPubKey creates a scriptPubKey for a P2PKH transaction given the destination public key hash
+// NewP2PKHScriptPubKey creates a scriptPubKey for a P2PKH transaction given the destination public key hash
 func NewP2PKHScriptPubKey(publicKeyHash []byte) ([]byte, error) {
 	if publicKeyHash == nil {
 		return nil, errors.New("publicKeyHash can't be empty.")
@@ -157,8 +159,8 @@ func NewP2PKHScriptPubKey(publicKeyHash []byte) ([]byte, error) {
 	return scriptPubKey.Bytes(), nil
 }
 
-//Hash160 performs the same operations as OP_HASH160 in Bitcoin Script
-//It hashes the given data first with SHA256, then RIPEMD160
+// Hash160 performs the same operations as OP_HASH160 in Bitcoin Script
+// It hashes the given data first with SHA256, then RIPEMD160
 func Hash160(data []byte) ([]byte, error) {
 	//Does identical function to Script OP_HASH160. Hash once with SHA-256, then RIPEMD-160
 	if data == nil {
@@ -174,7 +176,7 @@ func Hash160(data []byte) ([]byte, error) {
 	return hash, nil
 }
 
-//NewRawTransaction creates a Bitcoin transaction given inputs, output satoshi amount, scriptSig and scriptPubKey
+// NewRawTransaction creates a Bitcoin transaction given inputs, output satoshi amount, scriptSig and scriptPubKey
 func NewRawTransaction(inputTxHash string, satoshis int, scriptSig []byte, scriptPubKey []byte) ([]byte, error) {
 	//Version field
 	version, err := hex.DecodeString("01000000")
@@ -248,7 +250,7 @@ func NewRawTransaction(inputTxHash string, satoshis int, scriptSig []byte, scrip
 	return buffer.Bytes(), nil
 }
 
-//NewSignature generates a ECDSA signature given the raw transaction and privateKey to sign with
+// NewSignature generates a ECDSA signature given the raw transaction and privateKey to sign with
 func NewSignature(rawTransaction []byte, privateKey []byte) ([]byte, error) {
 	//Start secp256k1
 	secp256k1.Start()

@@ -1,3 +1,4 @@
+// fund.go - Funding P2SH address from a Bitcoin address.
 package multisig
 
 import (
@@ -10,6 +11,10 @@ import (
 	"log"
 )
 
+// GenerateFund is the main thread for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
+// Takes flagPrivateKey (private key of input Bitcoins to fund with), flagInputTx (input transaction hash of
+// Bitcoins to fund with), flagAmount (amount in Satoshis to send, with balance left over from input being used
+// as transaction fee) and flagP2SHDestination (destination P2SH multisig address which is being funded) as arguments.
 func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
 
 	//Get private key as decoded raw bytes
@@ -61,6 +66,8 @@ func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, fla
 	fmt.Println(finalTransactionHex)
 }
 
+// signP2PKHTransaction signs a raw P2PKH transaction, given a private key and the scriptPubKey, inputTx and amount
+// to construct the final transaction.
 func signP2PKHTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey []byte, inputTx string, amount int) ([]byte, error) {
 	publicKey, err := btcutils.NewPublicKey(privateKey)
 	if err != nil {

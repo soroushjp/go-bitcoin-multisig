@@ -1,3 +1,4 @@
+// spend.go - Spending P2SH multisig funds to a Bitcoin address.
 package multisig
 
 import (
@@ -13,6 +14,10 @@ import (
 	"strings"
 )
 
+// GenerateSpend is the main thread for spending from a P2SH multisig address with the 'go-bitcoin-multisig spend' subcommand.
+// Takes flagPrivateKeys (comma separated list of M private keys), flagDestination (destination address of spent funds),
+// flagRedeemScript (redeemScript that matches P2SH script), flagInputTx (input transaction hash of P2SH input to spend)
+// and flagAmount (amount in Satoshis to send, with balance left over from input being used as transaction fee) as arguments.
 func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
 	//First we create the raw transaction.
 	//In order to construct the raw transaction we need the input transaction hash,
@@ -71,6 +76,8 @@ func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScr
 	fmt.Println(finalTransactionHex)
 }
 
+// signMultisigTransaction signs a raw P2PKH transaction, given slice of private keys and the scriptPubKey, inputTx,
+// redeemScript and amount to construct the final transaction.
 func signMultisigTransaction(rawTransaction []byte, orderedPrivateKeys [][]byte, scriptPubKey []byte, redeemScript []byte, inputTx string, amount int) ([]byte, error) {
 	//Hash type SIGHASH_ALL
 	hashCodeType, err := hex.DecodeString("01")

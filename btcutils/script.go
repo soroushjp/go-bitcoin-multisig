@@ -1,7 +1,8 @@
+// Provides Bitcoin Script enum to improve code readability.
+// See https://en.bitcoin.it/wiki/Script for full specification.
 package btcutils
 
-//Enum to improve code readability when using Bitcoin Script OP codes
-//See https://en.bitcoin.it/wiki/Script for full spec
+// OP_1 through OP_16
 const (
 	OP_1 = 81 + iota
 	OP_2 //82
@@ -21,6 +22,7 @@ const (
 	OP_16 //96
 )
 
+// OP codes other than OP_1 through OP_16, used in P2SH Multisig transanctions.
 const (
 	OP_0             = 0
 	OP_PUSHDATA1     = 76
