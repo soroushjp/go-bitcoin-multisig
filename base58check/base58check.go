@@ -1,3 +1,6 @@
+// Package base58check will base58 encode and decode with given hex prefixes.
+//
+// Useful for Bitcoin protocol.
 package base58check
 
 import (
@@ -10,6 +13,7 @@ import (
 	"github.com/soroushjp/go-bitcoin-multisig/base58check/base58"
 )
 
+// Encode will encode a given byteData with a hex prefix and return a base58 encoded string.
 func Encode(prefix string, byteData []byte) string {
 	prefixBytes, err := hex.DecodeString(prefix)
 	if err != nil {
@@ -69,6 +73,7 @@ func Encode(prefix string, byteData []byte) string {
 	return buffer.String()
 }
 
+// Decode will decode a base58 string and return decoded bytes.
 func Decode(value string) []byte {
 	zeroBytes := 0
 	for i := 0; i < len(value); i++ {
