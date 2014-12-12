@@ -33,6 +33,14 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 		}
 	}
 	//Create redeemScript from public keys
+	if flagM*73+flagN*66 > 496 {
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
+		fmt.Printf("WARNING: %d-of-%d multisig transaction is valid but *non-standard* for Bitcoin v0.9.x and earlier.\n", flagM, flagN)
+		fmt.Println("\tIt may take a very long time (possibly never) for transaction spending multisig funds to be included in a block.")
+		fmt.Println("\tTo remain valid, choose smaller m and n values such that m*73+n*66 <= 496, as per standardness rules.")
+		fmt.Println("\tSee http://bitcoin.stackexchange.com/questions/23893/what-are-the-limits-of-m-and-n-in-m-of-n-multisig-addresses for more details.")
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
+	}
 	redeemScript, err := btcutils.NewMOfNRedeemScript(flagM, flagN, publicKeys)
 	if err != nil {
 		log.Fatal(err)
