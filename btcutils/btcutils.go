@@ -17,6 +17,11 @@ import (
 	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
+// ZeroNonce is used for testing and debugging. It is by default false, but if set to true, then newNonce()
+// will always return a zero-valued [32]byte{}. Allows repeatable ECDSA signatures for testing
+// **Should never be turned on in production. Limit to use in tests only.**
+var ZeroNonce bool
+
 func randInt(min int, max int) uint8 {
 	//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
 	// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
@@ -27,6 +32,9 @@ func randInt(min int, max int) uint8 {
 
 func newNonce() [32]byte {
 	var bytes [32]byte
+	if ZeroNonce {
+		return bytes //Returns zero-valued [32]byte if FixedNonceAtZero set to true. See note at FixedNonceAtZero declaration.
+	}
 	for i := 0; i < 32; i++ {
 		//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
 		// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
@@ -50,8 +58,8 @@ func NewPrivateKey() []byte {
 
 // NewPublicKey generates the public key from the private key.
 // Unfortunately golang ecdsa package does not include a
-// secp256k1 curve as this is fairly specific to bitcoin
-// as I understand it, so I have used this one by toxeus which wraps the official bitcoin/c-secp256k1 with cgo.
+// secp256k1 curve as this is fairly specific to Bitcoin.
+// Using toxeus/go-secp256k1 which wraps the official bitcoin/c-secp256k1 with cgo.
 func NewPublicKey(privateKey []byte) ([]byte, error) {
 	var privateKey32 [32]byte
 	for i := 0; i < 32; i++ {

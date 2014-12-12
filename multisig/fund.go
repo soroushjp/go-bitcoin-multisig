@@ -16,7 +16,6 @@ import (
 // Bitcoins to fund with), flagAmount (amount in Satoshis to send, with balance left over from input being used
 // as transaction fee) and flagP2SHDestination (destination P2SH multisig address which is being funded) as arguments.
 func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
-
 	//Get private key as decoded raw bytes
 	privateKey := base58check.Decode(flagPrivateKey)
 	//In order to construct the raw transaction we need the input transaction hash,
