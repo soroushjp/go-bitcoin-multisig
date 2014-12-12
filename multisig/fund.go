@@ -11,6 +11,9 @@ import (
 	"log"
 )
 
+//Anything outputed to the user is declared globally so that we can easily run tests on these.
+var finalTransactionHex string
+
 // GenerateFund is the main thread for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
 // Takes flagPrivateKey (private key of input Bitcoins to fund with), flagInputTx (input transaction hash of
 // Bitcoins to fund with), flagAmount (amount in Satoshis to send, with balance left over from input being used
@@ -59,7 +62,7 @@ func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, fla
 	if err != nil {
 		log.Fatal(err)
 	}
-	finalTransactionHex := hex.EncodeToString(finalTransaction)
+	finalTransactionHex = hex.EncodeToString(finalTransaction)
 	//Output our final transaction
 	fmt.Println("Your final transaction is")
 	fmt.Println(finalTransactionHex)

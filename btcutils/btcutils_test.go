@@ -1,8 +1,10 @@
 package btcutils
 
 import (
-	"encoding/hex"
 	"github.com/soroushjp/go-bitcoin-multisig/base58check"
+	"github.com/soroushjp/go-bitcoin-multisig/testutils"
+
+	"encoding/hex"
 	"reflect"
 	"testing"
 )
@@ -16,7 +18,7 @@ func TestHash160(t *testing.T) {
 	}
 	hashHex := hex.EncodeToString(hash)
 	if hashHex != testHashHex {
-		compareError(t, "Deterministic hash RIPEMD160(SHA256(data)) different from expected hash.", testHashHex, hashHex)
+		testutils.CompareError(t, "Deterministic hash RIPEMD160(SHA256(data)) different from expected hash.", testHashHex, hashHex)
 	}
 }
 
@@ -40,7 +42,7 @@ func TestNewMOfNRedeemScript(t *testing.T) {
 	}
 	redeemScriptHex := hex.EncodeToString(redeemScript)
 	if redeemScriptHex != testRedeemScriptHex {
-		compareError(t, "M-of-N redeem script different from expected script.", testRedeemScriptHex, redeemScriptHex)
+		testutils.CompareError(t, "M-of-N redeem script different from expected script.", testRedeemScriptHex, redeemScriptHex)
 	}
 }
 
@@ -69,7 +71,7 @@ func TestNewP2SHScriptPubKey(t *testing.T) {
 	}
 	scriptPubKeyHex := hex.EncodeToString(scriptPubKey)
 	if scriptPubKeyHex != testScriptPubKeyHex {
-		compareError(t, "P2SH scriptPubKey different from expected script.", testScriptPubKeyHex, scriptPubKeyHex)
+		testutils.CompareError(t, "P2SH scriptPubKey different from expected script.", testScriptPubKeyHex, scriptPubKeyHex)
 	}
 }
 
@@ -84,7 +86,7 @@ func TestNewP2PKHScriptPubKey(t *testing.T) {
 	}
 	scriptPubKeyHex := hex.EncodeToString(scriptPubKey)
 	if scriptPubKeyHex != testScriptPubKeyHex {
-		compareError(t, "P2PKH scriptPubKey different from expected script.", testScriptPubKeyHex, scriptPubKeyHex)
+		testutils.CompareError(t, "P2PKH scriptPubKey different from expected script.", testScriptPubKeyHex, scriptPubKeyHex)
 	}
 }
 
@@ -100,7 +102,7 @@ func TestNewRawTransaction(t *testing.T) {
 		t.Error(err)
 	}
 	if !reflect.DeepEqual(rawTx, testRawTx) {
-		compareError(t, "Raw transaction different from expected transaction.", testRawTx, rawTx)
+		testutils.CompareError(t, "Raw transaction different from expected transaction.", testRawTx, rawTx)
 	}
 }
 
@@ -116,17 +118,3 @@ func TestNewRawTransaction(t *testing.T) {
 
 // 	t.Error(signature)
 // }
-
-// compareError formats an error message nicely to print the error, the expected output and received output.
-// expected and got may be of any type acceptable for t.Error args (ie. any args acceptable for fmt.Println)
-func compareError(t *testing.T, errMessage string, expected interface{}, got interface{}) {
-	t.Error(
-		errMessage,
-		"\n",
-		"Expected:\n",
-		expected,
-		"\n",
-		"Got: \n",
-		got,
-	)
-}

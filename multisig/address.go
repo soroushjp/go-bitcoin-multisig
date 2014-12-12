@@ -49,7 +49,7 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//Get P2SH address by base58 encodin with P2SH prefix 0x05
+	//Get P2SH address by base58 encoding with P2SH prefix 0x05
 	P2SHAddress := base58check.Encode("05", redeemScriptHash)
 	//Output P2SH and redeemScript
 	fmt.Println("---------------------")
