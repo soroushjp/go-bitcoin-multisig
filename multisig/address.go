@@ -33,7 +33,6 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 		}
 	}
 	//Create redeemScript from public keys
-	//redeemScript := btcutils.NewTwoOfTwoRedeemScript(publicKeys[0], publicKeys[1])
 	redeemScript, err := btcutils.NewMOfNRedeemScript(flagM, flagN, publicKeys)
 	if err != nil {
 		log.Fatal(err)

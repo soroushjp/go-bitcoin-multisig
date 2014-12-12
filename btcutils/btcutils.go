@@ -108,8 +108,8 @@ func NewMOfNRedeemScript(m int, n int, publicKeys [][]byte) ([]byte, error) {
 	return redeemScript.Bytes(), nil
 }
 
-// CheckPublicKeyIsValid runs a couple of checks to make sure public key look valid.
-// Returns nil (no error) if valid, otherwise an error with helpful message
+// CheckPublicKeyIsValid runs a couple of checks to make sure a public key looks valid.
+// Returns an error with a helpful message or nil if key is valid.
 func CheckPublicKeyIsValid(publicKey []byte) error {
 	errMessage := ""
 	if publicKey == nil {
