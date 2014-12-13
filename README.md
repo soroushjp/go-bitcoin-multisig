@@ -14,7 +14,7 @@ Bitcoin [M-of-N Multisig](https://bitcoin.org/en/developer-guide#escrow-and-arbi
 
 * Generate public/private key pairs valid for use in P2PKH/Multisig Bitcoin transactions
 	- Up to 100 key pairs generated in one command.
-	- **PSEUDORANDOM**. Do not use in production without adding randomness.
+	- **Disclaimer**: These key pairs are cryptographically secure to the limits of the [crypto/rand](http://golang.org/pkg/crypto/rand/) cryptography package in Golang. They should not be used without further security audit in production systems.
 
 * Generate M-of-N multisig P2SH addresses given a set of specified public keys, M and N.
 	- Up to 7-of-7 multisig.

@@ -67,15 +67,7 @@ func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScr
 	rawTransactionBuffer.Write(rawTransaction)
 	rawTransactionBuffer.Write(hashCodeType)
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
-	//Sign the raw transaction
-	fmt.Println("sign params:")
-	// fmt.Println(rawTransactionWithHashCodeType)
-	fmt.Println(privateKeys)
-	// fmt.Println(scriptPubKey)
-	// fmt.Println(redeemScript)
-	// fmt.Println(flagInputTx)
-	// fmt.Println(flagAmount)
-
+	//Sign transaction
 	finalTransaction, err := signMultisigTransaction(rawTransactionWithHashCodeType, privateKeys, scriptPubKey, redeemScript, flagInputTx, flagAmount)
 	if err != nil {
 		log.Fatal(err)

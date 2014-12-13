@@ -4,13 +4,15 @@ package btcutils
 
 import (
 	"bytes"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log"
 	"math"
-	"math/rand"
+	mathrand "math/rand"
 	"time"
 
 	"code.google.com/p/go.crypto/ripemd160"
@@ -27,20 +29,18 @@ var SetFixedNonce bool
 var FIXED_NONCE = [...]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}
 
 func randInt(min int, max int) uint8 {
-	//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
-	// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
-	// FOR DEMONSTRATION PURPOSES ONLY
-	rand.Seed(time.Now().UTC().UnixNano())
-	return uint8(min + rand.Intn(max-min))
+	//This function is *not* cryptographically secure.
+	//Used for nonce which does not need to be cryptographically secure, just changing with each signature
+	mathrand.Seed(time.Now().UTC().UnixNano())
+	return uint8(min + mathrand.Intn(max-min))
 }
 
 func newNonce() [32]byte {
+	//This function is *not* cryptographically secure.
+	//Used for nonce which does not need to be cryptographically secure, just changing with each signature
 	var bytes [32]byte
 	if !SetFixedNonce {
 		for i := 0; i < 32; i++ {
-			//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
-			// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
-			// FOR DEMONSTRATION PURPOSES ONLY
 			bytes[i] = byte(randInt(0, math.MaxUint8))
 		}
 	} else {
@@ -49,14 +49,24 @@ func newNonce() [32]byte {
 	return bytes
 }
 
-// NewPrivateKey generates a pseudorandom private key compatible with ECDSA. *NOT* "cryptographically random".
+// NewRandomBytes generates pseudorandom bytes of length size.
+// Cryptographically secure to the limits of crypto/rand package.
+func NewRandomBytes(size int) ([]byte, error) {
+	randBytes := make([]byte, size)
+	_, err := rand.Read(randBytes)
+	if err != nil {
+		return nil, err
+	}
+	return randBytes, nil
+}
+
+// NewPrivateKey generates a pseudorandom private key compatible with ECDSA.
+// Cryptographically secure to the limits of crypto/rand package.
 func NewPrivateKey() []byte {
-	bytes := make([]byte, 32)
-	for i := 0; i < 32; i++ {
-		//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
-		// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
-		// FOR DEMONSTRATION PURPOSES ONLY
-		bytes[i] = byte(randInt(0, math.MaxUint8))
+	bytes, err := NewRandomBytes(32)
+	if err != nil {
+		log.Fatal(err)
+		//Throw an error instead of just returning one quietly since cryptographically secure pseudorandomness is crucial to private key.
 	}
 	return bytes
 }

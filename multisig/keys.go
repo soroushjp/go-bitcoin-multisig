@@ -25,7 +25,7 @@ func GenerateKeys(flagKeyCount int, flagConcise bool) {
 
 	if !flagConcise {
 		fmt.Println("----------------------------------------------------------------------")
-		fmt.Println("THESE KEY PAIRS ARE PSEUDORANDOM. FOR DEMONSTRATION PURPOSES ONLY.")
+		fmt.Println("Disclaimer: These key pairs are cryptographically secure to the limits of the crypto/rand cryptography package in Golang. They should not be used without further security audit in production systems.")
 		fmt.Println("----------------------------------------------------------------------")
 		fmt.Println("Each generated key pair includes: ")
 		fmt.Println("* Your private key\t\t\t-- Keep this private, needed to spend received Bitcoins.")
