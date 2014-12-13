@@ -113,6 +113,16 @@ go-bitcoin-multisig spend --input-tx 02b082113e35d5386285094c2829e7e2963fa0b5369
 * **Order of keys:**
 	* As per protocol rules, private keys provided to spend a multisig wallet have to be given in the same order (skipping keys is okay when m < n, but still in the same order) as given when the P2SH address was generated.
 
+##Tests
+
+go-bitcoin-multisig includes a full suite of tests to test low and high level functionality, including expected multisig funding and spending transactions. To run tests:
+
+```bash
+go test ./...
+```
+
+Beware that using the -v flag when testing the multisig package will output messages usually encountered by the user using the CLI interface, since this is high level testing of functionality. No -v flag is usually necessary since failing tests will automatically output relevant errors.
+
 ##License
 
 go-bitcoin-multisig project is released under the terms of the MIT license. Thank you to [prettymuchbryce for his hellobitcoin project](https://github.com/prettymuchbryce/hellobitcoin) which provided both early code and inspiration for this project.
