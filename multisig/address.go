@@ -14,6 +14,9 @@ import (
 	"strings"
 )
 
+var P2SHAddress string
+var RedeemScriptHex string
+
 // GenerateAddress is the main thread for creating P2SH multisig addresses with the 'go-bitcoin-multisig address' subcommand.
 // Takes flagM (number of keys required to spend), flagN (total number of keys)
 // and flagPublicKeys (comma separated list of N public keys) as arguments.
@@ -50,7 +53,9 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 		log.Fatal(err)
 	}
 	//Get P2SH address by base58 encoding with P2SH prefix 0x05
-	P2SHAddress := base58check.Encode("05", redeemScriptHash)
+	P2SHAddress = base58check.Encode("05", redeemScriptHash)
+	//Get redeemScript in Hex
+	RedeemScriptHex = hex.EncodeToString(redeemScript)
 	//Output P2SH and redeemScript
 	fmt.Println("---------------------")
 	fmt.Println("Your *P2SH ADDRESS* is:")
@@ -59,7 +64,7 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 	fmt.Println("---------------------")
 	fmt.Println("---------------------")
 	fmt.Println("Your *REDEEM SCRIPT* is:")
-	fmt.Println(hex.EncodeToString(redeemScript))
+	fmt.Println(RedeemScriptHex)
 	fmt.Println("Keep private and provide this to redeem multisig balance later.")
 	fmt.Println("---------------------")
 }

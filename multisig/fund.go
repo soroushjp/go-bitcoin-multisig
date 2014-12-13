@@ -13,6 +13,7 @@ import (
 
 //Anything outputed to the user is declared globally so that we can easily run tests on these.
 var finalTransactionHex string
+var SetFixedNonce bool
 
 // GenerateFund is the main thread for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
 // Takes flagPrivateKey (private key of input Bitcoins to fund with), flagInputTx (input transaction hash of

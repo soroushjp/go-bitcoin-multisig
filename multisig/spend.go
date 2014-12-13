@@ -14,6 +14,8 @@ import (
 	"strings"
 )
 
+var FinalTransactionHex string
+
 // GenerateSpend is the main thread for spending from a P2SH multisig address with the 'go-bitcoin-multisig spend' subcommand.
 // Takes flagPrivateKeys (comma separated list of M private keys), flagDestination (destination address of spent funds),
 // flagRedeemScript (redeemScript that matches P2SH script), flagInputTx (input transaction hash of P2SH input to spend)
@@ -66,14 +68,22 @@ func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScr
 	rawTransactionBuffer.Write(hashCodeType)
 	rawTransactionWithHashCodeType := rawTransactionBuffer.Bytes()
 	//Sign the raw transaction
+	fmt.Println("sign params:")
+	// fmt.Println(rawTransactionWithHashCodeType)
+	fmt.Println(privateKeys)
+	// fmt.Println(scriptPubKey)
+	// fmt.Println(redeemScript)
+	// fmt.Println(flagInputTx)
+	// fmt.Println(flagAmount)
+
 	finalTransaction, err := signMultisigTransaction(rawTransactionWithHashCodeType, privateKeys, scriptPubKey, redeemScript, flagInputTx, flagAmount)
 	if err != nil {
 		log.Fatal(err)
 	}
-	finalTransactionHex := hex.EncodeToString(finalTransaction)
+	FinalTransactionHex = hex.EncodeToString(finalTransaction)
 	//Output final transaction
 	fmt.Println("Your final transaction is")
-	fmt.Println(finalTransactionHex)
+	fmt.Println(FinalTransactionHex)
 }
 
 // signMultisigTransaction signs a raw P2PKH transaction, given slice of private keys and the scriptPubKey, inputTx,

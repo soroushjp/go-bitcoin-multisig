@@ -124,7 +124,7 @@ func TestNewSignature(t *testing.T) {
 	testPrivateKey := []byte{20, 175, 46, 68, 8, 91, 132, 129, 57, 230, 158, 54, 186, 115, 191, 245, 121, 11, 108, 224, 125, 96, 99, 40, 11, 156, 199, 158, 55, 199, 110, 229}
 	testSignature := []byte{48, 68, 2, 32, 109, 108, 170, 194, 72, 175, 150, 246, 175, 167, 249, 4, 245, 80, 37, 58, 15, 62, 243, 245, 170, 47, 230, 131, 138, 149, 178, 22, 105, 20, 104, 226, 2, 32, 121, 239, 192, 104, 145, 56, 231, 141, 41, 172, 104, 123, 214, 135, 215, 255, 145, 125, 106, 219, 104, 4, 242, 63, 219, 107, 193, 152, 184, 110, 20, 41}
 
-	setFixedNonce = true //Use testing-only setting to fix nonce at zero bytes, so we can get repeatability in testing
+	SetFixedNonce = true //Use testing-only setting to fix nonce at zero bytes, so we can get repeatability in testing
 	signature, err := NewSignature(testRawTx, testPrivateKey)
 	if err != nil {
 		t.Error(err)

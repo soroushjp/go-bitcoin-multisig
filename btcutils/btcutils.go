@@ -20,7 +20,7 @@ import (
 // setZeroNonce is used for testing and debugging. It is by default false, but if set to true, then newNonce()
 // will always return a zero-valued [32]byte{}. Allows repeatable ECDSA signatures for testing
 // **Should never be turned on in production. Limit to use in tests only.**
-var setFixedNonce bool
+var SetFixedNonce bool
 
 //Fixed nonce value for repeatable testing.
 //We declare var and not const because Go slices are mutable and cannot be const, but we use fixedNonce like a constant.
@@ -36,7 +36,7 @@ func randInt(min int, max int) uint8 {
 
 func newNonce() [32]byte {
 	var bytes [32]byte
-	if !setFixedNonce {
+	if !SetFixedNonce {
 		for i := 0; i < 32; i++ {
 			//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
 			// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
