@@ -2,6 +2,14 @@
 
 Bitcoin [M-of-N Multisig](https://bitcoin.org/en/developer-guide#escrow-and-arbitration) Pay-to-ScriptHash (P2SH) Transaction Builder, built in [Go](https://golang.org/)
 
+* [Features](#features)
+* [Build Instructions](#build-instructions)
+* [Usage](#usage)
+* [Notes](#notes)
+* [Tests](#tests)
+* [License](#license)
+* [Find out more](#find-out-more)
+
 ##Features
 
 * Generate public/private key pairs valid for use in P2PKH/Multisig Bitcoin transactions
