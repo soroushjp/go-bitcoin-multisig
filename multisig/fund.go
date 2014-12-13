@@ -65,8 +65,10 @@ func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, fla
 	}
 	finalTransactionHex = hex.EncodeToString(finalTransaction)
 	//Output our final transaction
-	fmt.Println("Your final transaction is")
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("Your raw funding transaction is")
 	fmt.Println(finalTransactionHex)
+	fmt.Println("-------------------------------------------------------------")
 }
 
 // signP2PKHTransaction signs a raw P2PKH transaction, given a private key and the scriptPubKey, inputTx and amount

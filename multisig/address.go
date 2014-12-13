@@ -57,14 +57,14 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 	//Get redeemScript in Hex
 	RedeemScriptHex = hex.EncodeToString(redeemScript)
 	//Output P2SH and redeemScript
-	fmt.Println("---------------------")
+	fmt.Println("-------------------------------------------------------------")
 	fmt.Println("Your *P2SH ADDRESS* is:")
 	fmt.Println(P2SHAddress)
 	fmt.Println("Give this to sender funding multisig address with Bitcoin.")
-	fmt.Println("---------------------")
-	fmt.Println("---------------------")
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("-------------------------------------------------------------")
 	fmt.Println("Your *REDEEM SCRIPT* is:")
 	fmt.Println(RedeemScriptHex)
 	fmt.Println("Keep private and provide this to redeem multisig balance later.")
-	fmt.Println("---------------------")
+	fmt.Println("-------------------------------------------------------------")
 }

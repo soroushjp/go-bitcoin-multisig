@@ -74,8 +74,10 @@ func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScr
 	}
 	FinalTransactionHex = hex.EncodeToString(finalTransaction)
 	//Output final transaction
-	fmt.Println("Your final transaction is")
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("Your raw spending transaction is")
 	fmt.Println(FinalTransactionHex)
+	fmt.Println("-------------------------------------------------------------")
 }
 
 // signMultisigTransaction signs a raw P2PKH transaction, given slice of private keys and the scriptPubKey, inputTx,
