@@ -19,7 +19,7 @@ import (
 	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
-// setZeroNonce is used for testing and debugging. It is by default false, but if set to true, then newNonce()
+// setFixedNonce is used for testing and debugging. It is by default false, but if set to true, then newNonce()
 // will always return a zero-valued [32]byte{}. Allows repeatable ECDSA signatures for testing
 // **Should never be turned on in production. Limit to use in tests only.**
 var SetFixedNonce bool

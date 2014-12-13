@@ -4,7 +4,7 @@
 package multisig
 
 import (
-	"github.com/soroushjp/go-bitcoin-multisig/base58check"
+	"github.com/prettymuchbryce/hellobitcoin/base58check"
 	"github.com/soroushjp/go-bitcoin-multisig/btcutils"
 
 	"encoding/csv"
