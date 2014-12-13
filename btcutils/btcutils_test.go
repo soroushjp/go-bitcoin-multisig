@@ -9,6 +9,19 @@ import (
 	"testing"
 )
 
+func TestNewPublicKey(t *testing.T) {
+	testPrivateKey := []byte{38, 245, 100, 77, 9, 147, 145, 209, 208, 136, 215, 161, 171, 75, 199, 219, 26, 95, 66, 101, 110, 38, 86, 249, 86, 179, 195, 10, 70, 153, 203, 150}
+	testPublicKey := []byte{4, 231, 41, 35, 190, 64, 15, 200, 89, 150, 144, 81, 215, 14, 125, 179, 216, 217, 70, 21, 254, 204, 182, 219, 188, 192, 54, 241, 31, 248, 110, 145, 167, 117, 225, 204, 37, 169, 182, 242, 22, 12, 200, 26, 250, 241, 215, 142, 206, 63, 30, 119, 105, 242, 234, 41, 44, 103, 152, 1, 87, 24, 207, 190, 156}
+
+	publicKey, err := NewPublicKey(testPrivateKey)
+	if err != nil {
+		t.Error(err)
+	}
+	if !reflect.DeepEqual(testPublicKey, publicKey) {
+		testutils.CompareError(t, "Public key different from expected key.", testPublicKey, publicKey)
+	}
+}
+
 func TestHash160(t *testing.T) {
 	testHashHex := "51d9ac622c2133ca4aaf58d4a4239526eb42c348"
 
@@ -106,15 +119,17 @@ func TestNewRawTransaction(t *testing.T) {
 	}
 }
 
-// func TestNewSignature(t *testing.T) {
-// 	testRawTx := []byte{1, 0, 0, 0, 1, 172, 198, 251, 158, 194, 195, 136, 77, 58, 18, 168, 158, 112, 120, 200, 56, 83, 217, 183, 145, 34, 129, 206, 251, 20, 186, 192, 10, 39, 55, 211, 58, 0, 0, 0, 0, 25, 118, 169, 20, 146, 3, 228, 122, 22, 247, 153, 222, 208, 53, 50, 227, 228, 82, 96, 111, 220, 82, 0, 126, 136, 172, 255, 255, 255, 255, 1, 64, 0, 1, 0, 0, 0, 0, 0, 23, 169, 20, 26, 139, 0, 38, 52, 49, 102, 98, 92, 116, 117, 240, 30, 72, 181, 237, 232, 192, 37, 46, 135, 0, 0, 0, 0}
-// 	testPrivateKey := []byte{20, 175, 46, 68, 8, 91, 132, 129, 57, 230, 158, 54, 186, 115, 191, 245, 121, 11, 108, 224, 125, 96, 99, 40, 11, 156, 199, 158, 55, 199, 110, 229}
+func TestNewSignature(t *testing.T) {
+	testRawTx := []byte{1, 0, 0, 0, 1, 172, 198, 251, 158, 194, 195, 136, 77, 58, 18, 168, 158, 112, 120, 200, 56, 83, 217, 183, 145, 34, 129, 206, 251, 20, 186, 192, 10, 39, 55, 211, 58, 0, 0, 0, 0, 25, 118, 169, 20, 146, 3, 228, 122, 22, 247, 153, 222, 208, 53, 50, 227, 228, 82, 96, 111, 220, 82, 0, 126, 136, 172, 255, 255, 255, 255, 1, 64, 0, 1, 0, 0, 0, 0, 0, 23, 169, 20, 26, 139, 0, 38, 52, 49, 102, 98, 92, 116, 117, 240, 30, 72, 181, 237, 232, 192, 37, 46, 135, 0, 0, 0, 0}
+	testPrivateKey := []byte{20, 175, 46, 68, 8, 91, 132, 129, 57, 230, 158, 54, 186, 115, 191, 245, 121, 11, 108, 224, 125, 96, 99, 40, 11, 156, 199, 158, 55, 199, 110, 229}
+	testSignature := []byte{48, 68, 2, 32, 109, 108, 170, 194, 72, 175, 150, 246, 175, 167, 249, 4, 245, 80, 37, 58, 15, 62, 243, 245, 170, 47, 230, 131, 138, 149, 178, 22, 105, 20, 104, 226, 2, 32, 121, 239, 192, 104, 145, 56, 231, 141, 41, 172, 104, 123, 214, 135, 215, 255, 145, 125, 106, 219, 104, 4, 242, 63, 219, 107, 193, 152, 184, 110, 20, 41}
 
-// 	signature, err := NewSignature(testRawTx, testPrivateKey)
-// 	time.Sleep(1 * time.Second)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-
-// 	t.Error(signature)
-// }
+	setFixedNonce = true //Use testing-only setting to fix nonce at zero bytes, so we can get repeatability in testing
+	signature, err := NewSignature(testRawTx, testPrivateKey)
+	if err != nil {
+		t.Error(err)
+	}
+	if !reflect.DeepEqual(testSignature, signature) {
+		testutils.CompareError(t, "ECDSA signature different from expected signature.", testSignature, signature)
+	}
+}

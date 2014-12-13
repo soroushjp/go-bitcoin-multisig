@@ -17,10 +17,14 @@ import (
 	secp256k1 "github.com/toxeus/go-secp256k1"
 )
 
-// ZeroNonce is used for testing and debugging. It is by default false, but if set to true, then newNonce()
+// setZeroNonce is used for testing and debugging. It is by default false, but if set to true, then newNonce()
 // will always return a zero-valued [32]byte{}. Allows repeatable ECDSA signatures for testing
 // **Should never be turned on in production. Limit to use in tests only.**
-var ZeroNonce bool
+var setFixedNonce bool
+
+//Fixed nonce value for repeatable testing.
+//We declare var and not const because Go slices are mutable and cannot be const, but we use fixedNonce like a constant.
+var FIXED_NONCE = [...]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}
 
 func randInt(min int, max int) uint8 {
 	//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
@@ -32,14 +36,15 @@ func randInt(min int, max int) uint8 {
 
 func newNonce() [32]byte {
 	var bytes [32]byte
-	if ZeroNonce {
-		return bytes //Returns zero-valued [32]byte if FixedNonceAtZero set to true. See note at FixedNonceAtZero declaration.
-	}
-	for i := 0; i < 32; i++ {
-		//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
-		// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
-		// FOR DEMONSTRATION PURPOSES ONLY
-		bytes[i] = byte(randInt(0, math.MaxUint8))
+	if !setFixedNonce {
+		for i := 0; i < 32; i++ {
+			//THIS IS *NOT* "cryptographically random" AND IS *NOT* SECURE.
+			// PLEASE USE BETTER SOURCE OF RANDOMNESS IN PRODUCTION SYSTEMS
+			// FOR DEMONSTRATION PURPOSES ONLY
+			bytes[i] = byte(randInt(0, math.MaxUint8))
+		}
+	} else {
+		bytes = FIXED_NONCE
 	}
 	return bytes
 }
@@ -72,6 +77,23 @@ func NewPublicKey(privateKey []byte) ([]byte, error) {
 	}
 	secp256k1.Stop()
 	return publicKey, nil
+}
+
+// Hash160 performs the same operations as OP_HASH160 in Bitcoin Script
+// It hashes the given data first with SHA256, then RIPEMD160
+func Hash160(data []byte) ([]byte, error) {
+	//Does identical function to Script OP_HASH160. Hash once with SHA-256, then RIPEMD-160
+	if data == nil {
+		return nil, errors.New("Empty bytes cannot be hashed")
+	}
+	shaHash := sha256.New()
+	shaHash.Write(data)
+	hash := shaHash.Sum(nil) //SHA256 first
+	ripemd160Hash := ripemd160.New()
+	ripemd160Hash.Write(hash)
+	hash = ripemd160Hash.Sum(nil) //RIPEMD160 second
+
+	return hash, nil
 }
 
 // NewMOfNRedeemScript creates a M-of-N Multisig redeem script given m, n and n public keys
@@ -158,23 +180,6 @@ func NewP2PKHScriptPubKey(publicKeyHash []byte) ([]byte, error) {
 	scriptPubKey.WriteByte(byte(OP_EQUALVERIFY))
 	scriptPubKey.WriteByte(byte(OP_CHECKSIG))
 	return scriptPubKey.Bytes(), nil
-}
-
-// Hash160 performs the same operations as OP_HASH160 in Bitcoin Script
-// It hashes the given data first with SHA256, then RIPEMD160
-func Hash160(data []byte) ([]byte, error) {
-	//Does identical function to Script OP_HASH160. Hash once with SHA-256, then RIPEMD-160
-	if data == nil {
-		return nil, errors.New("Empty bytes cannot be hashed")
-	}
-	shaHash := sha256.New()
-	shaHash.Write(data)
-	hash := shaHash.Sum(nil) //SHA256 first
-	ripemd160Hash := ripemd160.New()
-	ripemd160Hash.Write(hash)
-	hash = ripemd160Hash.Sum(nil) //RIPEMD160 second
-
-	return hash, nil
 }
 
 // NewRawTransaction creates a Bitcoin transaction given inputs, output satoshi amount, scriptSig and scriptPubKey
