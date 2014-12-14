@@ -14,13 +14,21 @@ import (
 	"strings"
 )
 
-var FinalTransactionHex string
+//OutputSpend formats and prints relevant outputs to the user.
+func OutputSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
+	finalTransactionHex := generateSpend(flagPrivateKeys, flagDestination, flagRedeemScript, flagInputTx, flagAmount)
+	//Output final transaction
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("Your raw spending transaction is")
+	fmt.Println(finalTransactionHex)
+	fmt.Println("-------------------------------------------------------------")
+}
 
-// GenerateSpend is the main thread for spending from a P2SH multisig address with the 'go-bitcoin-multisig spend' subcommand.
+// generateSpend is the high-level logic for spending from a P2SH multisig address with the 'go-bitcoin-multisig spend' subcommand.
 // Takes flagPrivateKeys (comma separated list of M private keys), flagDestination (destination address of spent funds),
 // flagRedeemScript (redeemScript that matches P2SH script), flagInputTx (input transaction hash of P2SH input to spend)
 // and flagAmount (amount in Satoshis to send, with balance left over from input being used as transaction fee) as arguments.
-func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
+func generateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) string {
 	//First we create the raw transaction.
 	//In order to construct the raw transaction we need the input transaction hash,
 	//the destination address, the number of satoshis to send, and the scriptSig
@@ -72,12 +80,9 @@ func GenerateSpend(flagPrivateKeys string, flagDestination string, flagRedeemScr
 	if err != nil {
 		log.Fatal(err)
 	}
-	FinalTransactionHex = hex.EncodeToString(finalTransaction)
-	//Output final transaction
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("Your raw spending transaction is")
-	fmt.Println(FinalTransactionHex)
-	fmt.Println("-------------------------------------------------------------")
+	finalTransactionHex := hex.EncodeToString(finalTransaction)
+
+	return finalTransactionHex
 }
 
 // signMultisigTransaction signs a raw P2PKH transaction, given slice of private keys and the scriptPubKey, inputTx,

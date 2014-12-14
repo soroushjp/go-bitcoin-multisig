@@ -41,16 +41,18 @@ func main() {
 
 	//keys -- Generate public/private key pairs
 	case cmdKeys.FullCommand():
-		multisig.GenerateKeys(*cmdKeysCount, *cmdKeysConcise)
+		multisig.OutputKeys(*cmdKeysCount, *cmdKeysConcise)
 
-	//address -- Create a P2SH address
+	//address -- Create a multisig P2SH address
 	case cmdAddress.FullCommand():
-		multisig.GenerateAddress(*cmdAddressM, *cmdAddressN, *cmdAddressPublicKeys)
+		multisig.OutputAddress(*cmdAddressM, *cmdAddressN, *cmdAddressPublicKeys)
 
+	//address -- Fund a P2SH address
 	case cmdFund.FullCommand():
-		multisig.GenerateFund(*cmdFundPrivateKey, *cmdFundInputTx, *cmdFundAmount, *cmdFundDestination)
+		multisig.OutputFund(*cmdFundPrivateKey, *cmdFundInputTx, *cmdFundAmount, *cmdFundDestination)
 
+	//address -- Spend a multisig P2SH address
 	case cmdSpend.FullCommand():
-		multisig.GenerateSpend(*cmdSpendPrivateKeys, *cmdSpendDestination, *cmdSpendRedeemScript, *cmdSpendInputTx, *cmdSpendAmount)
+		multisig.OutputSpend(*cmdSpendPrivateKeys, *cmdSpendDestination, *cmdSpendRedeemScript, *cmdSpendInputTx, *cmdSpendAmount)
 	}
 }

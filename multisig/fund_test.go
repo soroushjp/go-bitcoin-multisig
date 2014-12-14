@@ -17,7 +17,7 @@ func TestGenerateFund(t *testing.T) {
 		testP2SHDestination := "347N1Thc213QqfYCz3PZkjoJpNv5b14kBd"
 		testFinalTransanctionHex := "0100000001acc6fb9ec2c3884d3a12a89e7078c83853d9b7912281cefb14bac00a2737d33a000000008a47304402206d6caac248af96f6afa7f904f550253a0f3ef3f5aa2fe6838a95b216691468e202207d1c7fb129adec15700c378e142c506b5bbadafdedbb62f614dd0bb128faeecd01410431393af9984375830971ab5d3094c6a7d02db3568b2b06212a7090094549701bbb9e84d9477451acc42638963635899ce91bacb451a1bb6da73ddfbcf596bddfffffffff01400001000000000017a9141a8b0026343166625c7475f01e48b5ede8c0252e8700000000"
 
-		GenerateFund(testPrivateKeyWIF, testInputTx, testAmount, testP2SHDestination)
+		finalTransactionHex := generateFund(testPrivateKeyWIF, testInputTx, testAmount, testP2SHDestination)
 		if finalTransactionHex != testFinalTransanctionHex {
 			testutils.CompareError(t, "Generated funding transaction different from expected transaction.", testFinalTransanctionHex, finalTransactionHex)
 		}
@@ -29,7 +29,7 @@ func TestGenerateFund(t *testing.T) {
 		testP2SHDestination := "3ErDPiDD7AsJDqKkayMA39iLJevTjDCjUa"
 		testFinalTransanctionHex := "01000000019f47d9bab82f8e92a61d74908456e2507257105cd7f0813c6fa68f647c864826000000008a47304402206d6caac248af96f6afa7f904f550253a0f3ef3f5aa2fe6838a95b216691468e2022004ad7b55e6c3a595bb770f2a172c99c2b03c903401c4fd05718b2e470ac70a4b014104ff4c2ce7513a6c896ebfaaa4ae52cea35374e0eac90ccb8f4e5fa14b8322e2bae4c65116c7af2ba6a82831e48c451fc29a66d49c24757130ebf07c142bbcbe75ffffffff01b01102000000000017a9149056f3c2a8cbd11340fa2ee4736dea1d298c9d118700000000"
 
-		GenerateFund(testPrivateKeyWIF, testInputTx, testAmount, testP2SHDestination)
+		finalTransactionHex := generateFund(testPrivateKeyWIF, testInputTx, testAmount, testP2SHDestination)
 		if finalTransactionHex != testFinalTransanctionHex {
 			testutils.CompareError(t, "Generated funding transaction different from expected transaction.", testFinalTransanctionHex, finalTransactionHex)
 		}
@@ -41,7 +41,7 @@ func TestGenerateFund(t *testing.T) {
 		testP2SHDestination := "34wgSuG9qtaNEV4MGye9UJcffcFTxnmXSC"
 		testFinalTransanctionHex := "0100000001507b8cda2448a92b51333b5d7e4a5cc9c45c8b85a58f7c91d4403e66d3ce73d0000000008a47304402206d6caac248af96f6afa7f904f550253a0f3ef3f5aa2fe6838a95b216691468e2022017a181a29869fb641bab86b1fe60fefdf918ed44ec0ab32409effff94af606dc014104d95cf578183f346117b9743722bb6df93e1c62990824a1fc6645fd3dee45fa7ea5f164da7b518c3fd08a623664410df5a3b5f6ef1c5a285e834fd57c5a24a41effffffff0110fc02000000000017a91423ae5bc99220a608aefb8455cdf7f43bfdbae67d8700000000"
 
-		GenerateFund(testPrivateKeyWIF, testInputTx, testAmount, testP2SHDestination)
+		finalTransactionHex := generateFund(testPrivateKeyWIF, testInputTx, testAmount, testP2SHDestination)
 		if finalTransactionHex != testFinalTransanctionHex {
 			testutils.CompareError(t, "Generated funding transaction different from expected transaction.", testFinalTransanctionHex, finalTransactionHex)
 		}

@@ -14,13 +14,36 @@ import (
 	"strings"
 )
 
-var P2SHAddress string
-var RedeemScriptHex string
+//OutputAddress formats and prints relevant outputs to the user.
+func OutputAddress(flagM int, flagN int, flagPublicKeys string) {
+	P2SHAddress, redeemScriptHex := generateAddress(flagM, flagN, flagPublicKeys)
 
-// GenerateAddress is the main thread for creating P2SH multisig addresses with the 'go-bitcoin-multisig address' subcommand.
+	if flagM*73+flagN*66 > 496 {
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
+		fmt.Printf("WARNING: %d-of-%d multisig transaction is valid but *non-standard* for Bitcoin v0.9.x and earlier.\n", flagM, flagN)
+		fmt.Println("\tIt may take a very long time (possibly never) for transaction spending multisig funds to be included in a block.")
+		fmt.Println("\tTo remain valid, choose smaller m and n values such that m*73+n*66 <= 496, as per standardness rules.")
+		fmt.Println("\tSee http://bitcoin.stackexchange.com/questions/23893/what-are-the-limits-of-m-and-n-in-m-of-n-multisig-addresses for more details.")
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
+	}
+
+	//Output P2SH and redeemScript
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("Your *P2SH ADDRESS* is:")
+	fmt.Println(P2SHAddress)
+	fmt.Println("Give this to sender funding multisig address with Bitcoin.")
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("Your *REDEEM SCRIPT* is:")
+	fmt.Println(redeemScriptHex)
+	fmt.Println("Keep private and provide this to redeem multisig balance later.")
+	fmt.Println("-------------------------------------------------------------")
+}
+
+// generateAddress is the high-level logic for creating P2SH multisig addresses with the 'go-bitcoin-multisig address' subcommand.
 // Takes flagM (number of keys required to spend), flagN (total number of keys)
 // and flagPublicKeys (comma separated list of N public keys) as arguments.
-func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
+func generateAddress(flagM int, flagN int, flagPublicKeys string) (string, string) {
 	//Convert public keys argument into slice of public key bytes with necessary tidying
 	flagPublicKeys = strings.Replace(flagPublicKeys, "'", "\"", -1) //Replace single quotes with double since csv package only recognizes double quotes
 	publicKeyStrings, err := csv.NewReader(strings.NewReader(flagPublicKeys)).Read()
@@ -36,14 +59,6 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 		}
 	}
 	//Create redeemScript from public keys
-	if flagM*73+flagN*66 > 496 {
-		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
-		fmt.Printf("WARNING: %d-of-%d multisig transaction is valid but *non-standard* for Bitcoin v0.9.x and earlier.\n", flagM, flagN)
-		fmt.Println("\tIt may take a very long time (possibly never) for transaction spending multisig funds to be included in a block.")
-		fmt.Println("\tTo remain valid, choose smaller m and n values such that m*73+n*66 <= 496, as per standardness rules.")
-		fmt.Println("\tSee http://bitcoin.stackexchange.com/questions/23893/what-are-the-limits-of-m-and-n-in-m-of-n-multisig-addresses for more details.")
-		fmt.Println("------------------------------------------------------------------------------------------------------------------------")
-	}
 	redeemScript, err := btcutils.NewMOfNRedeemScript(flagM, flagN, publicKeys)
 	if err != nil {
 		log.Fatal(err)
@@ -53,18 +68,9 @@ func GenerateAddress(flagM int, flagN int, flagPublicKeys string) {
 		log.Fatal(err)
 	}
 	//Get P2SH address by base58 encoding with P2SH prefix 0x05
-	P2SHAddress = base58check.Encode("05", redeemScriptHash)
+	P2SHAddress := base58check.Encode("05", redeemScriptHash)
 	//Get redeemScript in Hex
-	RedeemScriptHex = hex.EncodeToString(redeemScript)
-	//Output P2SH and redeemScript
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("Your *P2SH ADDRESS* is:")
-	fmt.Println(P2SHAddress)
-	fmt.Println("Give this to sender funding multisig address with Bitcoin.")
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("Your *REDEEM SCRIPT* is:")
-	fmt.Println(RedeemScriptHex)
-	fmt.Println("Keep private and provide this to redeem multisig balance later.")
-	fmt.Println("-------------------------------------------------------------")
+	redeemScriptHex := hex.EncodeToString(redeemScript)
+
+	return P2SHAddress, redeemScriptHex
 }

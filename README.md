@@ -31,10 +31,6 @@ Next, if you have your Go environment set up in the [usual way](https://golang.o
 
 ```bash
 go get github.com/soroushjp/go-bitcoin-multisig
-
-cd $GOPATH/src/github.com/soroushjp/go-bitcoin-multisig/
-
-go install
 ```
 
 And that's it! Now you can run the binary:
@@ -126,10 +122,8 @@ go-bitcoin-multisig spend --input-tx 02b082113e35d5386285094c2829e7e2963fa0b5369
 go-bitcoin-multisig includes a full suite of tests to test low and high level functionality, including expected multisig funding and spending transactions. To run tests:
 
 ```bash
-go test ./...
+go test ./... -v
 ```
-
-Beware that using the -v flag when testing the multisig package will output messages usually encountered by the user using the CLI interface, since this is high level testing of functionality. No -v flag is usually necessary since failing tests will automatically output relevant errors.
 
 ##License
 

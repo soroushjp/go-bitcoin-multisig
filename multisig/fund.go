@@ -11,15 +11,23 @@ import (
 	"log"
 )
 
-//Anything outputed to the user is declared globally so that we can easily run tests on these.
-var finalTransactionHex string
-var SetFixedNonce bool
+//OutputFund formats and prints relevant outputs to the user.
+func OutputFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
 
-// GenerateFund is the main thread for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
+	finalTransactionHex := generateFund(flagPrivateKey, flagInputTx, flagAmount, flagP2SHDestination)
+
+	//Output our final transaction
+	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("Your raw funding transaction is")
+	fmt.Println(finalTransactionHex)
+	fmt.Println("-------------------------------------------------------------")
+}
+
+// generateFund is the high-level logic for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
 // Takes flagPrivateKey (private key of input Bitcoins to fund with), flagInputTx (input transaction hash of
 // Bitcoins to fund with), flagAmount (amount in Satoshis to send, with balance left over from input being used
 // as transaction fee) and flagP2SHDestination (destination P2SH multisig address which is being funded) as arguments.
-func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
+func generateFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) string {
 	//Get private key as decoded raw bytes
 	privateKey := base58check.Decode(flagPrivateKey)
 	//In order to construct the raw transaction we need the input transaction hash,
@@ -63,12 +71,9 @@ func GenerateFund(flagPrivateKey string, flagInputTx string, flagAmount int, fla
 	if err != nil {
 		log.Fatal(err)
 	}
-	finalTransactionHex = hex.EncodeToString(finalTransaction)
-	//Output our final transaction
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("Your raw funding transaction is")
-	fmt.Println(finalTransactionHex)
-	fmt.Println("-------------------------------------------------------------")
+	finalTransactionHex := hex.EncodeToString(finalTransaction)
+
+	return finalTransactionHex
 }
 
 // signP2PKHTransaction signs a raw P2PKH transaction, given a private key and the scriptPubKey, inputTx and amount
