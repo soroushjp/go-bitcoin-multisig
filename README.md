@@ -57,8 +57,10 @@ go-bitcoin-multisig keys <optional-flags>
 ```
 
 Optional Flags:
-  --count=1  No. of key pairs to generate.
-  --concise  Turn on concise output. Default is off (verbose output).
+* --count=n
+	- No. of key pairs to generate. Generates n key pairs.
+* --concise
+	- Turn on concise output. Default is off (verbose output).
 
 **Example:**
 
