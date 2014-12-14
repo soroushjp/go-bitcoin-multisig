@@ -18,10 +18,16 @@ import (
 func OutputSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
 	finalTransactionHex := generateSpend(flagPrivateKeys, flagDestination, flagRedeemScript, flagInputTx, flagAmount)
 	//Output final transaction
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("Your raw spending transaction is")
-	fmt.Println(finalTransactionHex)
-	fmt.Println("-------------------------------------------------------------")
+	//Output our final transaction
+	fmt.Printf(`
+-----------------------------------------------------------------------------------------------------------------------------------
+Your raw spending transaction is:
+%v
+Give this to the sender funding the multisig address with Bitcoin.
+-----------------------------------------------------------------------------------------------------------------------------------
+`,
+		finalTransactionHex,
+	)
 }
 
 // generateSpend is the high-level logic for spending from a P2SH multisig address with the 'go-bitcoin-multisig spend' subcommand.

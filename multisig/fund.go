@@ -13,14 +13,18 @@ import (
 
 //OutputFund formats and prints relevant outputs to the user.
 func OutputFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP2SHDestination string) {
-
 	finalTransactionHex := generateFund(flagPrivateKey, flagInputTx, flagAmount, flagP2SHDestination)
 
 	//Output our final transaction
-	fmt.Println("-------------------------------------------------------------")
-	fmt.Println("Your raw funding transaction is")
-	fmt.Println(finalTransactionHex)
-	fmt.Println("-------------------------------------------------------------")
+	fmt.Printf(`
+-----------------------------------------------------------------------------------------------------------------------------------
+Your raw funding transaction is:
+%v
+Give this to the sender funding the multisig address with Bitcoin.
+-----------------------------------------------------------------------------------------------------------------------------------
+`,
+		finalTransactionHex,
+	)
 }
 
 // generateFund is the high-level logic for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
