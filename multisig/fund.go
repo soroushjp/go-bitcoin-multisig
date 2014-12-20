@@ -20,7 +20,7 @@ func OutputFund(flagPrivateKey string, flagInputTx string, flagAmount int, flagP
 -----------------------------------------------------------------------------------------------------------------------------------
 Your raw funding transaction is:
 %v
-Give this to the sender funding the multisig address with Bitcoin.
+Broadcast this transaction to fund your P2SH address.
 -----------------------------------------------------------------------------------------------------------------------------------
 `,
 		finalTransactionHex,

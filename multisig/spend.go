@@ -23,7 +23,7 @@ func OutputSpend(flagPrivateKeys string, flagDestination string, flagRedeemScrip
 -----------------------------------------------------------------------------------------------------------------------------------
 Your raw spending transaction is:
 %v
-Give this to the sender funding the multisig address with Bitcoin.
+Broadcast this transaction to spend your multisig P2SH funds.
 -----------------------------------------------------------------------------------------------------------------------------------
 `,
 		finalTransactionHex,
