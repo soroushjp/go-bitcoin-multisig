@@ -10,7 +10,7 @@ Bitcoin [M-of-N Multisig](https://bitcoin.org/en/developer-guide#escrow-and-arbi
 * [License](#license)
 * [Find out more](#find-out-more)
 
-##Features
+## Features
 
 * Generate public/private key pairs valid for use in P2PKH/Multisig Bitcoin transactions
 	- Up to 100 key pairs generated in one command.
@@ -23,7 +23,7 @@ Bitcoin [M-of-N Multisig](https://bitcoin.org/en/developer-guide#escrow-and-arbi
 
 * Spend funds from multisig address to standard Bitcoin wallet.
 
-##Build instructions
+## Build instructions
 
 First, follow the instructions at [go-secp256k1](https://github.com/toxeus/go-secp256k1) to compile bitcoin/c-secp256k1, which is required for go-bitcoin-multisig.
 
@@ -45,12 +45,12 @@ Or, if you don't have $GOPATH/bin in your $PATH environment variable, try:
 $GOPATH/bin/go-bitcoin-multisig --help
 ```
 
-##Usage
+## Usage
 
 Full list of subcommands can be seen using go-bitcoin-multisig --help.
 Flags for each subcommand can be seen using go-bitcoin-multisig <subcommand> --help
 
-###Generate Keys
+### Generate Keys
 
 ```bash
 go-bitcoin-multisig keys <optional-flags>
@@ -106,7 +106,7 @@ go-bitcoin-multisig spend --input-tx 02b082113e35d5386285094c2829e7e2963fa0b5369
 
 <sub><sup>*Bonus*: Above examples are [real multisig transactions](https://blockchain.info/tx/eeab3ef6cbea5f812b1bb8b8270a163b781eb7cde10ae5a7d8a3f452a57dca93) created with go-bitcoin-multisig. ~~One lucky reader can redeem the balance in the real tx above with private key: *5Jmnhuc5gPWtTNczYVfL9yTbM6RArzXe3QYdnE9nbV4SBfppLc* #tip :)~~ ...And it's gone!</sub></sup>
 
-##Notes
+## Notes
 
 * **Transaction Fees:**
 	* The transaction fee is the difference between the specified amount when funding/spending multisig and balance of unspent input. 
@@ -119,7 +119,7 @@ go-bitcoin-multisig spend --input-tx 02b082113e35d5386285094c2829e7e2963fa0b5369
 * **Order of keys:**
 	* As per protocol rules, private keys provided to spend a multisig wallet have to be given in the same order (skipping keys is okay when m < n, but still in the same order) as given when the P2SH address was generated.
 
-##Tests
+## Tests
 
 go-bitcoin-multisig includes a full suite of tests to test low and high level functionality, including expected multisig funding and spending transactions. To run tests:
 
@@ -127,10 +127,10 @@ go-bitcoin-multisig includes a full suite of tests to test low and high level fu
 go test ./... -v
 ```
 
-##License
+## License
 
 go-bitcoin-multisig project is released under the terms of the MIT license. Thank you to [prettymuchbryce for his hellobitcoin project](https://github.com/prettymuchbryce/hellobitcoin) which provided both early code and inspiration for this project.
 
-##Find out more
+## Find out more
 
 Built as a working demonstration of the P2SH M-of-N multisig functionality in the Bitcoin protocol and to serve as a easy to read Go reference implementation of raw multisig transactions. If you would like to use this code or similar functionality in your application, I'd love to hear from you so I can extend the project in more useful ways for the Bitcoin community. Reach out on Twitter @soroushjp or email me_AT_soroushjp.com.
